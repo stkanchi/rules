@@ -1,0 +1,610 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CFT Template for creation of AWS Config Rule"
+Parameters:
+  MasterAccountId:
+    Type: "String"
+    Default: ""
+    Description: "The master account ID for an AWS account."
+  maxAccessKeyAge:
+    Type: "String"
+    Default: "90"
+    MinLength: "1"
+    Description: "Maximum number of days without rotation. Default 90."
+  wafWebAclIds:
+    Type: "String"
+    Default: ""
+    Description: "Comma separated list of web ACL ID (for WAF) or web ACL ARN (for WAFV2) checking for ALB association."
+  amiIds:
+    Type: "String"
+    Default: ""
+    Description: "Specify AMI IDs (comma separated list of up to 10)."
+  amisByTagKeyAndValue:
+    Type: "String"
+    Default: ""
+    Description: "Specify AMIs by tag (comma separated list up to 10; for example, \u0027tag-key:tag-value\u0027)."
+  requiredFrequencyValue:
+    Type: "String"
+    Default: "1"
+    Description: "Numerical value for required backup frequency. Maximum of 24 for hours, 31 for days."
+  requiredRetentionDays:
+    Type: "String"
+    Default: "35"
+    Description: "Required retention period in days."
+  requiredFrequencyUnit:
+    Type: "String"
+    Default: "days"
+    Description: "Unit of time for required backup frequency. Accepted values: \u0027hours\u0027, \u0027days\u0027."
+  principalArnList:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of AWS Identity and Access Management (IAM) Amazon Resource Names (ARNs) for the rule to NOT check."
+  requiredRetentionDays:
+    Type: "String"
+    Default: ""
+    Description: "Required retention period in days."
+  MaximumExecutionFrequency:
+    Type: "String"
+    Default: "TwentyFour_Hours"
+    Description: "The frequency that you want AWS Config to run evaluations for the rule."
+    MinLenght: "1"
+    AllowedValues: [
+        "One_Hour",
+        "Three_Hours",
+        "Six_Hours",
+        "Twelve_Hours",
+        "TwentyFour_Hours"
+      ]
+  cloudformationRoleArn:
+    Type: "String"
+    MinLenght: "1"
+    Description: "The AWS CloudFormation role ARN with IAM policy permissions to detect drift for AWS CloudFormation Stacks"
+  S3BucketNames:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of S3 bucket names for which data events logging should be enabled. Default behavior checks for all S3 buckets."
+  KmsKeyId:
+    Type: "String"
+    Default: ""
+    Description: "Amazon Resource Name (ARN) of the ID for the KMS key that is used to encrypt the log group."
+  LogGroupNames:
+    Type: "String"
+    Default: ""
+    Description: "A comma-separated list of Log Group names to check the retention period."
+  MinRetentionTime:
+    Type: "String"
+    Default: ""
+    Description: "Specify the retention time. Valid values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, and 3653. The default retention period is 365 days."
+  backupRetentionPeriod:
+    Type: "String"
+    Default: ""
+    Description: "Retention period for backups."
+  backupRetentionMinimum:
+    Type: "String"
+    Default: ""
+    Description: "Minimum retention period for backups."
+  preferredBackupWindow:
+    Type: "String"
+    Default: ""
+    Description: "Time range in which backups are created."
+  checkReadReplicas:
+    Type: "String"
+    Default: ""
+    Description: "Checks whether RDS DB instances have backups enabled for read replicas."
+  instanceType:
+    Type: "String"
+    Default: ""
+    Description: "Comma separated list of EC2 instance types (for example, \u0027t2.small, m4.large\u0027).",
+    MinLenght: "1"
+
+Resources: 
+  ConnfigRuleForAccessKeys: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConnfigRuleForAccessKeys"
+      Description: "Config Rule for Access Keys"
+      InputParameters: |
+        {
+          "maxAccessKeyAge": {
+            "Fn::If": [
+              "maxAccessKeyAge",
+              {
+                "Ref": "maxAccessKeyAge"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ACCESS_KEYS_ROTATED"
+  ConnfigRuleForAccessKeys: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConnfigRuleForAccessKeys"
+      Description: "Config Rule for Access Keys"
+      InputParameters: |
+        {
+          "maxAccessKeyAge": {
+            "Fn::If": [
+              "maxAccessKeyAge",
+              {
+                "Ref": "maxAccessKeyAge"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ACCESS_KEYS_ROTATED"
+  ConnfigRuleForAccessKeys: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConnfigRuleForAccessKeys"
+      Description: "Config Rule for Access Keys"
+      InputParameters: |
+        {
+          "maxAccessKeyAge": {
+            "Fn::If": [
+              "maxAccessKeyAge",
+              {
+                "Ref": "maxAccessKeyAge"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ACCESS_KEYS_ROTATED"
+  ConfigRuleForAccountPartofOrganizations: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForAccountPartofOrganizations"
+      Description: "Rule checks whether AWS account is part of AWS Organizations. The rule is NON_COMPLIANT if the AWS account is not part of AWS Organizations or AWS Organizations master account ID does not match rule parameter MasterAccountId"
+      InputParameters: |
+        {
+          "MasterAccountId": {
+            "Fn::If": [
+              "MasterAccountId",
+              {
+                "Ref": "MasterAccountId"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ACCOUNT_PART_OF_ORGANIZATIONS"
+  ConfigRuleForALBHTTPSToHTTPSRedirectionCheck: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForALBHTTPSToHTTPSRedirectionCheck"
+      Description: "Checks whether HTTP to HTTPS redirection is configured on all HTTP listeners of Application Load Balancers. The rule is NON_COMPLIANT if one or more HTTP listeners of Application Load Balancer do not have HTTP to HTTPS redirection configured."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ALB_HTTP_TO_HTTPS_REDIRECTION_CHECK"
+  ConfigRuleForALBWAFEnabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForALBWAFEnabled"
+      Description: "Checks if Web Application Firewall (WAF) is enabled on Application Load Balancers (ALBs). This rule is NON_COMPLIANT if key: waf.enabled is set to false."
+      InputParameters: |
+        {
+        "wafWebAclIds": {
+          "Fn::If": [
+            "wafWebAclIds",
+            {
+              "Ref": "wafWebAclIds"
+            },
+            {
+              "Ref": "AWS::NoValue"
+            }
+          ]
+        }
+        } 
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::ElasticLoadBalancingV2::LoadBalancer"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ACCOUNT_PART_OF_ORGANIZATIONS"
+  ConfigRuleForApprovedAmisByID: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForApprovedAmisByID"
+      Description:  "Checks whether running instances are using specified AMIs."
+      InputParameters: |
+        {
+        "amiIds": {
+          "Fn::If": [
+            "amiIds",
+            {
+              "Ref": "amiIds"
+            },
+            {
+              "Ref": "AWS::NoValue"
+            }
+          ]
+        }
+        }
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "APPROVED_AMIS_BY_ID"
+  ConfigRuleForApprovedAmisByTag: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForApprovedAmisByTag"
+      Description:  "Checks whether running instances are using specified AMIs."
+      InputParameters: |
+        {
+          "amisByTagKeyAndValue": {
+            "Fn::If": [
+              "amisByTagKeyAndValue",
+              {
+                "Ref": "amisByTagKeyAndValue"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::EC2::Instance"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "APPROVED_AMIS_BY_TAG"
+  ConfigRuleForBackupPlanMinFrequencyAndMinRetentionAndCheck: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForBackupPlanMinFrequencyAndMinRetentionAndCheck"
+      Description:  "Checks if a backup plan has a backup rule that satisfies the required frequency and retention period. The rule is NON_COMPLIANT if recovery points are not created at least as often as the specified frequency or expire before the specified period."
+      InputParameters: |
+        {
+          "requiredFrequencyValue": {
+            "Fn::If": [
+              "requiredFrequencyValue",
+              {
+                "Ref": "requiredFrequencyValue"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::Backup::BackupPlan"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "BACKUP_PLAN_MIN_FREQUENCY_AND_MIN_RETENTION_CHECK"
+  ConfigRuleForBackupRecoveryPointEncrypted: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForBackupRecoveryPointEncrypted"
+      Description:  "Checks if a recovery point is encrypted. The rule is NON_COMPLIANT if the recovery point is not encrypted."
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::Backup::RecoveryPoint"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "BACKUP_RECOVERY_POINT_ENCRYPTED"
+  ConfigRuleForBackupRecoveryPointManualDeletionDisabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForBackupRecoveryPointManualDeletionDisabled"
+      Description:  "Checks if a backup vault has an attached resource-based policy which prevents deletion of recovery points. The rule is NON_COMPLIANT if the Backup Vault does not have resource-based policies or has policies without a suitable \u0027Deny\u0027 statement."
+      InputParameters: |
+        {
+          "principalArnList": {
+            "Fn::If": [
+              "principalArnList",
+              {
+                "Ref": "principalArnList"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Scope:
+        ComplianceResourceTypes: [
+              "AWS::Backup::BackupVault"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "BACKUP_RECOVERY_POINT_MANUAL_DELETION_DISABLED"
+  ConfigRuleForBackupRecoveryPointMinimumRetentionCheck: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForBackupRecoveryPointMinimumRetentionCheck"
+      Description: "Checks if a recovery point expires no earlier than after the specified period. The rule is NON_COMPLIANT if the recovery point has a retention point that is less than the required retention period."
+      InputParameters: |
+        {
+          "requiredRetentionDays": {
+            "Fn::If": [
+              "requiredRetentionDays",
+              {
+                "Ref": "requiredRetentionDays"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::Backup::RecoveryPoint"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "BACKUP_RECOVERY_POINT_MINIMUM_RETENTION_CHECK"
+  ConfigRuleForCloudformationStackDriftDetectionCheck: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForBackupRecoveryPointMinimumRetentionCheck"
+      Description: "Checks whether your CloudFormation stacks\u0027 actual configuration differs, or has drifted, from its expected configuration."
+      InputParameters: |
+        {
+          "cloudformationRoleArn": {
+            "Fn::If": [
+              "cloudformationRoleArn",
+              {
+                "Ref": "cloudformationRoleArn"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Scope:
+        ComplianceResourceTypes: [
+              "AWS::CloudFormation::Stack"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "CLOUDFORMATION_STACK_DRIFT_DETECTION_CHECK"
+  ConfigRuleForCloudTrailCloudwatchLogsEnabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForCloudTrailCloudwatchLogsEnabled"
+      Description: "Checks whether AWS CloudTrail trails are configured to send logs to Amazon CloudWatch logs. The trail is non-compliant if the CloudWatchLogsLogGroupArn property of the trail is empty."
+      InputParameters: |
+        {
+          "expectedDeliveryWindowAge": {
+            "Fn::If": [
+              "expectedDeliveryWindowAge",
+              {
+                "Ref": "expectedDeliveryWindowAge"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "CLOUD_TRAIL_CLOUD_WATCH_LOGS_ENABLED"
+  ConfigRuleForCloudTrailEncryptionEnabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForCloudTrailEncryptionEnabled"
+      Description: "Checks whether AWS CloudTrail is configured to use the server side encryption (SSE) AWS Key Management Service (AWS KMS) customer master key (CMK) encryption. The rule is compliant if the KmsKeyId is defined"
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "CLOUD_TRAIL_ENCRYPTION_ENABLED"
+  ConfigRuleForCloudTrailLogFileValidationEnabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForCloudTrailLogFileValidationEnabled"
+      Description: "Checks whether AWS CloudTrail creates a signed digest file with logs. AWS recommends that the file validation must be enabled on all trails. The rule is noncompliant if the validation is not enabled."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED"
+  ConfigRuleForCloudtrailS3DataEventsEnabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForCloudtrailS3DataEventsEnabled"
+      Description: "Checks whether at least one AWS CloudTrail trail is logging Amazon S3 data events for all S3 buckets. The rule is NON_COMPLIANT if trails log data events for S3 buckets is not configured."
+      InputParameters: |
+        {
+          "S3BucketNames": {
+            "Fn::If": [
+              "S3BucketNames",
+              {
+                "Ref": "S3BucketNames"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "CLOUDTRAIL_S3_DATAEVENTS_ENABLED"
+  ConfigRuleForCloudwatchLogGroupEncrypted: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForCloudwatchLogGroupEncrypted"
+      Description: "Checks if Amazon CloudWatch Log Groups are encrypted with any AWS KMS key or a specified AWS KMS key Id. The rule is NON_COMPLIANT if a CloudWatch Log Group is not encrypted with a KMS key or is encrypted with a KMS key not supplied in the rule parameter."
+      InputParameters: |
+        {
+          "KmsKeyId": {
+            "Fn::If": [
+              "KmsKeyId",
+              {
+                "Ref": "KmsKeyId"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "CLOUDWATCH_LOG_GROUP_ENCRYPTED"
+  ConfigRuleForCloudwatchLogGroupEncrypted: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForCloudwatchLogGroupEncrypted"
+      Description: "Checks if Amazon CloudWatch Log Groups are encrypted with any AWS KMS key or a specified AWS KMS key Id. The rule is NON_COMPLIANT if a CloudWatch Log Group is not encrypted with a KMS key or is encrypted with a KMS key not supplied in the rule parameter."
+      InputParameters: |
+        {
+          "KmsKeyId": {
+            "Fn::If": [
+              "KmsKeyId",
+              {
+                "Ref": "KmsKeyId"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "CLOUDWATCH_LOG_GROUP_ENCRYPTED"
+  ConfigRuleforCLoudwatchLogGroupRetentionPeriodCheck: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleforCLoudwatchLogGroupRetentionPeriodCheck"
+      Description: "Checks whether Amazon CloudWatch LogGroup retention period is set to specific number of days. The rule is NON_COMPLIANT if the retention period is not set or is less than the configured retention period."
+      InputParameters: |
+        {
+          "LogGroupNames": {
+            "Fn::If": [
+              "LogGroupNames",
+              {
+                "Ref": "LogGroupNames"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          },
+          "MinRetentionTime": {
+            "Fn::If": [
+              "MinRetentionTime",
+              {
+                "Ref": "MinRetentionTime"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "CW_LOGGROUP_RETENTION_PERIOD_CHECK"
+  ConfigRuleforDBInstanceBackupEnabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleforDBInstanceBackupEnabled"
+      Description: "Checks whether RDS DB instances have backups enabled."
+      InputParameters: |
+        {
+          "backupRetentionPeriod": {
+            "Fn::If": [
+              "backupRetentionPeriod",
+              {
+                "Ref": "backupRetentionPeriod"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          },
+          "backupRetentionMinimum": {
+            "Fn::If": [
+              "backupRetentionMinimum",
+              {
+                "Ref": "backupRetentionMinimum"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          },
+          "preferredBackupWindow": {
+            "Fn::If": [
+              "preferredBackupWindow",
+              {
+                "Ref": "preferredBackupWindow"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          },
+          "checkReadReplicas": {
+            "Fn::If": [
+              "checkReadReplicas",
+              {
+                "Ref": "checkReadReplicas"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::RDS::DBInstance"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "DB_INSTANCE_BACKUP_ENABLED"
+  ConfigRuleforDesiredInstanceType: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleforDesiredInstanceType"
+      Description: "Checks whether your EC2 instances are of the specified instance types."
+      InputParameters: |
+        {
+          "instanceType": {
+            "Fn::If": [
+              "instanceType",
+              {
+                "Ref": "instanceType"
+              },
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          }
+        }
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::EC2::Instance"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "DESIRED_INSTANCE_TYPE"
