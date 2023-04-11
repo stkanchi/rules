@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CFT Template for creation of AWS Config Rule"
+Resources: 
+  ConfigRuleForEBSInBackupPlan: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEBSInBackupPlan"
+      Description: "Check if Amazon Elastic Block Store (Amazon EBS) volumes are added in backup plans of AWS Backup. The rule is NON_COMPLIANT if Amazon EBS volumes are not included in backup plans."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EBS_IN_BACKUP_PLAN"
+  ConfigRuleForEBSOptimizedInstance: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEBSOptimizedInstance"
+      Description: "Checks whether EBS optimization is enabled for your EC2 instances that can be EBS-optimized."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EBS_OPTIMIZED_INSTANCE"
+  ConfigRuleForEBSSnapshotPublicRestorableCheck: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEBSSnapshotPublicRestorableCheck"
+      Description: "Checks whether Amazon Elastic Block Store (Amazon EBS) snapshots are not publicly restorable. The rule is NON_COMPLIANT if one or more snapshots with RestorableByUserIds field are set to all, that is, Amazon EBS snapshots are public."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EBS_SNAPSHOT_PUBLIC_RESTORABLE_CHECK"
+  ConfigRuleForEC2EBSEncryptionByDefault: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2EBSEncryptionByDefault"
+      Description: "Check that Amazon Elastic Block Store (EBS) encryption is enabled by default. The rule is NON_COMPLIANT if the encryption is not enabled."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_EBS_ENCRYPTION_BY_DEFAULT"
