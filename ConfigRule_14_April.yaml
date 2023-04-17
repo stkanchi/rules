@@ -1,0 +1,201 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CFT Template for creation of AWS Config Rule"
+Parameters:
+  resourceTags:
+    Type: "String"
+    Default: ""
+    Description: "Tags of EFS File System for the rule to check, in JSON format."
+  resourceId:
+    Type: "String"
+    Default: ""
+    Description: "ID of EFS File System for the rule to check."
+  recoveryPointAgeValue:
+    Type: "String"
+    Default: ""
+    Description:  "Numerical value for maximum allowed age. No more than 744 for hours, 31 for days."
+  recoveryPointAgeUnit:
+    Type: "String"
+    Default: ""
+    Description: "Unit of time for maximum allowed age. Accepted values: \u0027hours\u0027, \u0027days\u0027."
+  crossRegionList:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of destination regions for the cross-region backup copy to be kept"
+  crossAccountList:
+    Type: "String"
+    Default: ""
+    Description:  "Comma-separated list of destination accounts for cross-account backup copy to be kept"
+  backupVaultLockCheck:
+    Type: "String"
+    Default: ""
+    Description:  "Accepted values: \u0027True\u0027 or \u0027False\u0027. Enter \u0027True\u0027 for the rule to check if the resource is backed up in a locked vault"
+  logTypes:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of logs that are enabled. Valid values are \u0027search\u0027, \u0027index\u0027, \u0027error\u0027."
+  s3BucketNames:
+    Type: "String"
+    Default: ""
+    Description:  "Comma-separated list of Amazon S3 bucket names for Amazon ELB to deliver the log files."
+  KmsKeyId:
+    Type: "String"
+    Default: ""
+    Description: "ID or ARN of the KMS key that is used to encrypt the volume."
+
+
+Conditions:
+  ConfigRuleForEFSLastBackupRecoveryPointCreatedCondition: !And
+    - !Not [!Equals [!Ref resourceTags, ""]]
+    - !Not [!Equals [!Ref resourceId, ""]]
+    - !Not [!Equals [!Ref recoveryPointAgeUnit, ""]]
+    - !Not [!Equals [!Ref recoveryPointAgeUnit, ""]]
+  ConfigRuleForEFSResourcesProtectedByBackupPlanCondition: !And
+    - !Not [!Equals [!Ref resourceTags, ""]]
+    - !Not [!Equals [!Ref resourceId, ""]]
+    - !Not [!Equals [!Ref crossRegionList, ""]]
+    - !Not [!Equals [!Ref crossAccountList, ""]]
+    - !Not [!Equals [!Ref backupVaultLockCheck, ""]]
+  ConfigRuleForElasticsearchLogstoCloudwatchCheck:
+    !Not [!Equals [!Ref logTypes, ""]]
+  ConfigRuleForELBLogginEnabledCheck:
+    !Not [!Equals [!Ref s3BucketNames, ""]]
+  ConfigRuleForEFSEncryptedCheckCondition:
+    !Not [!Equals [!Ref KmsKeyId, ""]]
+
+
+Resources: 
+  ConfigRuleForEFSLastBackupRecoveryPointCreated: 
+    Condition: ConfigRuleForEFSLastBackupRecoveryPointCreatedCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEFSLastBackupRecoveryPointCreated"
+      Description: "Checks if a recovery point was created for Amazon Elastic File System (Amazon EFS) File Systems. The rule is NON_COMPLIANT if the Amazon EFS File System does not have a corresponding Recovery Point created within the specified time period"
+      InputParameters: |
+        resourceTags: !Ref resourceTags
+        resourceId: !Ref resourceId
+        recoveryPointAgeValue: !Ref recoveryPointAgeValue
+        recoveryPointAgeUnit: !Ref recoveryPointAgeUnit
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EFS::FileSystem"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EFS_LAST_BACKUP_RECOVERY_POINT_CREATED"
+  ConfigRuleForEFSResourcesProtectedByBackupPlan: 
+    Condition: ConfigRuleForEFSResourcesProtectedByBackupPlanCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEFSResourcesProtectedByBackupPlan"
+      Description:  "Checks if Amazon Elastic File System (Amazon EFS) File Systems are protected by a backup plan. The rule is NON_COMPLIANT if the EFS File System is not covered by a backup plan."
+      InputParameters: |
+        resourceTags: !Ref resourceTags
+        resourceId: !Ref resourceId
+        crossRegionList: !Ref crossRegionList
+        crossAccountList: !Ref crossAccountList
+        backupVaultLockCheck: !Ref backupVaultLockCheck
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EFS::FileSystem"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EFS_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+  ConfigRuleForEIPAttachedTemplate: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEIPAttachedTemplate"
+      Description:  "Checks whether all EIP addresses allocated to a VPC are attached to EC2 instances or in-use ENIs."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::EIP"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EIP_ATTACHED"
+  ConfigRuleForElasticsearchinVPCOnly: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForElasticsearchinVPCOnly"
+      Description: "Checks whether Amazon OpenSearch Service domains are in Amazon Virtual Private Cloud (VPC). The rule is NON_COMPLIANT if ElasticSearch Service domain endpoint is public."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ELASTICSEARCH_IN_VPC_ONLY"
+  ConfigRuleForElasticsearchEncryptedAtRest: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForElasticsearchEncryptedAtRest"
+      Description:  "Checks whether Amazon OpenSearch Service domains have encryption at rest configuration enabled. The rule is NON_COMPLIANT if EncryptionAtRestOptions field is not enabled."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ELASTICSEARCH_ENCRYPTED_AT_REST"
+  ConfigRuleForElasticsearchLogstoCloudwatch: 
+    Condition: ConfigRuleForElasticsearchLogstoCloudwatchCheck
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForElasticsearchLogstoCloudwatch"
+      Description:  "Checks if Amazon OpenSearch Service domains are configured to send logs to Amazon CloudWatch Logs. The rule is COMPLIANT if a log is enabled for an Amazon ES domain. This rule is NON_COMPLIANT if logging is not configured."
+      InputParameters: |
+        logTypes: !Ref logTypes
+      Scope:
+        ComplianceResourceTypes: [
+         "AWS::Elasticsearch::Domain"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ELASTICSEARCH_LOGS_TO_CLOUDWATCH"
+  ConfigRuleForElasticSearchNodetoNodeEncryptionCheck: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForElasticSearchNodetoNodeEncryptionCheck"
+      Description:  "Check that Amazon OpenSearch Service nodes are encrypted end to end. The rule is NON_COMPLIANT if the node-to-node encryption is disabled on the domain."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::Elasticsearch::Domain"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ELASTICSEARCH_NODE_TO_NODE_ENCRYPTION_CHECK"
+  ConfigRuleForELBDeletionProtectionEnabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForELBDeletionProtectionEnabled"
+      Description:  "Checks whether an Elastic Load Balancer has deletion protection enabled. The rule is NON_COMPLIANT if deletion_protection.enabled is false."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::ElasticLoadBalancingV2::LoadBalancer"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ELB_DELETION_PROTECTION_ENABLED"
+  ConfigRuleForELBLogginEnabled: 
+    Condition: ConfigRuleForELBLogginEnabledCheck
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForELBLogginEnabled"
+      Description:  "Checks whether the Application Load Balancers and the Classic Load Balancers have logging enabled."
+      InputParameters: |
+        s3BucketNames: !Ref s3BucketNames
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::ElasticLoadBalancing::LoadBalancer",
+            "AWS::ElasticLoadBalancingV2::LoadBalancer"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ELB_LOGGING_ENABLED"
+  ConfigRuleForEncryptedVolumes: 
+    Condition: ConfigRuleForEncryptedVolumesCheck
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEncryptedVolumes"
+      Description:  "Checks whether EBS volumes that are in an attached state are encrypted."
+      InputParameters: |
+        kmsId: !Ref kmsId
+      Scope:
+        ComplianceResourceTypes: [
+            "AWS::EC2::Volume"
+          ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "ENCRYPTED_VOLUMES"

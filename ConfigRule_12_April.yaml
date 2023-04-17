@@ -1,0 +1,216 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CFT Template for creation of AWS Config Rule"
+Parameters:
+  resourceTags:
+    Type: "String"
+    Default: ""
+    Description: "Tags of Amazon EBS volumes for the rule to check, in JSON format."
+  resourceId:
+    Type: "String"
+    Default: ""
+    Description: "ID of Amazon EBS volume for the rule to check."
+  recoveryPointAgeValue:
+    Type: "String"
+    Default: "1"
+    Description: "Numerical value for maximum allowed age. No more than 744 for hours, 31 for days."
+  recoveryPointAgeUnit:
+    Type: "String"
+    Default: "days"
+    Description: "Unit of time for maximum allowed age. Accepted values: \u0027hours\u0027, \u0027days\u0027."
+  instanceType:
+    Type: "String"
+    Default: ""
+    Description: "Checks whether your EC2 instances are of the specified instance types."
+  IamInstanceProfileArnList:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of IAM profile Amazon Resource Names (ARNs) that can be attached to Amazon EC2 instances."
+  exemptedLaunchTemplates:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of exempted EC2 Launch Template IDs that are allowed to have Network Interfaces with the AssociatePublicIpAddress value set to \u0027true\u0027."
+  applicationNames:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of application names. Optionally, specify versions appended with \u0027:\u0027 (for example, \u0027Chrome:0.5.3, Firefox\u0027)."
+  platformType:
+    Type: "String"
+    Default: ""
+    Description: "Platform type (for example, \u0027Linux\u0027)."
+  inventoryNames:
+    Type: "String"
+    Default: ""
+    Description: "Comma separated list of Systems Manager inventory types (for example, \u0027AWS:Network, AWS:WindowsUpdate\u0027)."
+
+Conditions:
+  instanceTypeNotNull:
+    !Not [!Equals [!Ref instanceType, ""]]
+  IamInstanceProfileArnListNotNull:
+    !Not [!Equals [!Ref IamInstanceProfileArnList, ""]]
+  exemptedLaunchTemplatesNotNull:
+    !Not [!Equals [!Ref exemptedLaunchTemplates, ""]]
+  EC2ManagedInstanceApplicationBlackListedCondition: !And
+    - !Not [!Equals [!Ref applicationNames, ""]]
+    - !Not [!Equals [!Ref platformType, ""]]
+Resources: 
+  ConfigRuleForDMSReplicationNotPublic: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForDMSReplicationNotPublic"
+      Description: "Checks whether AWS Database Migration Service replication instances are public. The rule is NON_COMPLIANT if PubliclyAccessible field is True."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "DMS_REPLICATION_NOT_PUBLIC"
+  ConfigRuleForDesiredInstanceType: 
+    Condition: instanceTypeNotNull
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForDesiredInstanceType"
+      Description: "Checks whether your EC2 instances are of the specified instance types."
+      InputParameters: |
+        instanceType: !Ref instanceType
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "DESIRED_INSTANCE_TYPE"
+  ConfigRuleForEC2IMDSv2Check: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2IMDSv2Check"
+      Description: "Checks whether your Amazon Elastic Compute Cloud (Amazon EC2) instance metadata version is configured with Instance Metadata Service Version 2 (IMDSv2). The rule is NON_COMPLIANT if the HttpTokens is set to optional."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_IMDSV2_CHECK"
+  ConfigRuleForEC2DetialedInstanceMonitoringEnabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2DetialedInstanceMonitoringEnabled"
+      Description: "Checks whether detailed monitoring is enabled for EC2 instances."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_INSTANCE_DETAILED_MONITORING_ENABLED"
+  ConfigRuleForEC2InstanceNoPublicIp: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2InstanceNoPublicIp"
+      Description: "Checks whether Amazon Elastic Compute Cloud (Amazon EC2) instances have a public IP association. The rule is NON_COMPLIANT if the publicIp field is present in the Amazon EC2 instance configuration item. This rule applies only to IPv4."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_INSTANCE_NO_PUBLIC_IP"
+  ConfigRuleForEC2InstanceProfileAttached: 
+    Condition: IamInstanceProfileArnListNotNull
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2InstanceProfileAttached"
+      Description: "Checks if an Amazon Elastic Compute Cloud (Amazon EC2) instance has an Identity and Access Management (IAM) profile attached to it. This rule is NON_COMPLIANT if no IAM profile is attached to the Amazon EC2 instance."
+      InputParameters: |
+        IamInstanceProfileArnList: !Ref IamInstanceProfileArnList
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_INSTANCE_PROFILE_ATTACHED"
+  ConfigRuleForEC2LastBackupRecoveryPointCreated: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2LastBackupRecoveryPointCreated"
+      Description: "Checks if a recovery point was created for Amazon Elastic Compute Cloud (Amazon EC2) instances. The rule is NON_COMPLIANT if the Amazon EC2 instance does not have a corresponding recovery point created within the specified time period."
+      InputParameters: |
+        resourceTags: !Ref resourceTags
+        resourceId: !Ref resourceId
+        recoveryPointAgeValue: !Ref recoveryPointAgeValue
+        recoveryPointAgeUnit: !Ref recoveryPointAgeUnit
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_LAST_BACKUP_RECOVERY_POINT_CREATED"
+  ConfigRuleForEC2LaunchTemplatePublicIpDisabled: 
+    Type: AWS::Config::ConfigRule
+    Condition: exemptedLaunchTemplatesNotNull
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2LaunchTemplatePublicIpDisabled"
+      Description: "Checks if Amazon EC2 Launch Templates are set to assign public IP addresses to Network Interfaces. The rule is NON_COMPLIANT if the default version of an EC2 Launch Template has at least 1 Network Interface with \u0027AssociatePublicIpAddress\u0027 set to \u0027true\u0027."
+      InputParameters: |
+        exemptedLaunchTemplates: !Ref exemptedLaunchTemplates
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::LaunchTemplate"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_LAUNCH_TEMPLATE_PUBLIC_IP_DISABLED"
+  ConfigRuleForEC2ManagedInstanceApplicationBlackListed: 
+    Type: AWS::Config::ConfigRule
+    Condition: EC2ManagedInstanceApplicationBlackListedCondition
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2ManagedInstanceApplicationBlackListed"
+      Description: "Checks that none of the specified applications are installed on the instance. Optionally, specify the version. Newer versions will not be blacklisted. Optionally, specify the platform to apply the rule only to instances running that platform."
+      InputParameters: |
+        applicationNames: !Ref applicationNames
+        platformType: !Ref platformType
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::SSM::ManagedInstanceInventory"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_MANAGEDINSTANCE_APPLICATIONS_BLACKLISTED"
+  ConfigRuleForEC2ManagedInstanceApplicationComplianaceCheckStatus: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2ManagedInstanceApplicationComplianaceCheckStatus"
+      Description: "Checks whether the compliance status of the AWS Systems Manager association compliance is COMPLIANT or NON_COMPLIANT after the association execution on the instance. The rule is compliant if the field status is COMPLIANT."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::SSM::AssociationCompliance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_MANAGEDINSTANCE_ASSOCIATION_COMPLIANCE_STATUS_CHECK"
+  ConfigRuleForEC2ManagedInstanceInventoryBlackListed: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2ManagedInstanceInventoryBlackListed"
+      Description: "Checks whether instances managed by Amazon EC2 Systems Manager are configured to collect blacklisted inventory types."
+      InputParameters: |
+        inventoryNames: !Ref inventoryNames
+        platformType: !Ref platformType
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::SSM::ManagedInstanceInventory"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_MANAGEDINSTANCE_INVENTORY_BLACKLISTED"
+  ConfigRuleForEC2ManagedInstancePatchComplianceStatusCheck: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2ManagedInstancePatchComplianceStatusCheck"
+      Description: "Checks whether the compliance status of the AWS Systems Manager patch compliance is COMPLIANT or NON_COMPLIANT after the patch installation on the instance. The rule is compliant if the field status is COMPLIANT."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::SSM::PatchCompliance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_MANAGEDINSTANCE_PATCH_COMPLIANCE_STATUS_CHECK"

@@ -1,0 +1,275 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CFT Template for creation of AWS Config Rule"
+Parameters:
+  resourceTags:
+    Type: "String"
+    Default: ""
+    Description: "Tags of Amazon EBS volumes for the rule to check, in JSON format."
+  resourceId:
+    Type: "String"
+    Default: ""
+    Description: "ID of Amazon EBS volume for the rule to check."
+  resourceTags:
+    Type: "String"
+    Default: ""
+    Description: "Tags of Amazon EBS volumes for the rule to check, in JSON format."
+  crossRegionList:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of destination regions for the cross-region backup copy to be kept"
+  crossAccountList:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of destination accounts for cross-account backup copy to be kept"
+  maxRetentionDays:
+    Type: "String"
+    Default: ""
+    Description: "The maximum retention period in days for the Backup Vault Lock"
+  minRetentionDays:
+    Type: "String"
+    Default: ""
+    Description:  "The minimum retention period in days for the Backup Vault Lock"
+  backupVaultLockCheck:
+    Type: "String"
+    Default: ""
+    Description: "Accepted values: \u0027True\u0027 or \u0027False\u0027. Enter \u0027True\u0027 for the rule to check if the resource is backed up in a locked vault"
+  recoveryPointAgeUnit:
+    Type: "String"
+    Default: "days"
+    Description: "Unit of time for maximum allowed age. Accepted values: \u0027hours\u0027, \u0027days\u0027."
+  instanceType:
+    Type: "String"
+    Default: ""
+    Description: "Checks whether your EC2 instances are of the specified instance types."
+  IamInstanceProfileArnList:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of IAM profile Amazon Resource Names (ARNs) that can be attached to Amazon EC2 instances."
+  exemptedLaunchTemplates:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of exempted EC2 Launch Template IDs that are allowed to have Network Interfaces with the AssociatePublicIpAddress value set to \u0027true\u0027."
+  applicationNames:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of application names. Optionally, specify versions appended with \u0027:\u0027 (for example, \u0027Chrome:0.5.3, Firefox\u0027)."
+  platformType:
+    Type: "String"
+    Default: ""
+    Description: "Platform type (for example, \u0027Linux\u0027)."
+  platformVersion:
+    Type: "String"
+    Default: ""
+    Description: "Platform version (for example, \u00272016.09\u0027)."
+  platformName:
+    Type: "String"
+    Default: ""
+    Description: "The version of the platform (for example, \u00272016.09\u0027)"
+  agentVersion:
+    Type: "String"
+    Default: ""
+    Description: "Agent version (for example, \u00272.0.433.0\u0027)."
+  inventoryNames:
+    Type: "String"
+    Default: ""
+    Description: "Comma separated list of Systems Manager inventory types (for example, \u0027AWS:Network, AWS:WindowsUpdate\u0027)."
+  AllowedDays:
+    Type: "String"
+    Default: "30"
+    Description: "Number of days the instance can be stopped for before it becomes non-compliant. The default number of days is 30."
+  deleteOnTermination:
+    Type: "String"
+    Default: ""
+    Description: "EBS volumes are marked for deletion when an instance is terminated."
+  approvedDirectories:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of subdirectory paths that are approved for Amazon EFS access point root directory enforcement."
+  approvedUids:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of POSIX user ID that are approved for EFS access point user enforcement."
+  approvedGids:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of POSIX group IDs that are approved for EFS access point user enforcement."
+  KmsKeyId:
+    Type: "String"
+    Default: ""
+    Description: "Amazon Resource Name (ARN) of the ID for the KMS key that is used to encrypt the File Sytem."
+
+Conditions:
+  EC2ManagedInstancePlatformCheckCondition: !And
+    - !Not [!Equals [!Ref platformVersion, ""]]
+    - !Not [!Equals [!Ref platformType, ""]]
+    - !Not [!Equals [!Ref agentVersion, ""]]
+    - !Not [!Equals [!Ref platformName, ""]]
+  EC2ResourcesProtectedbyBackupPlanCondition: !And
+    - !Not [!Equals [!Ref resourceTags, ""]]
+    - !Not [!Equals [!Ref resourceId, ""]]
+    - !Not [!Equals [!Ref crossRegionList, ""]]
+    - !Not [!Equals [!Ref crossAccountList, ""]]
+    - !Not [!Equals [!Ref maxRetentionDays, ""]]
+    - !Not [!Equals [!Ref minRetentionDays, ""]]
+    - !Not [!Equals [!Ref backupVaultLockCheck, ""]]
+  ConfigRuleForEC2StoppedInstanceCondition:
+    !Not [!Equals [!Ref AllowedDays, ""]]
+  ConfigRuleForEC2VolumeInUseCheckCondition:
+    !Not [!Equals [!Ref deleteOnTermination, ""]]
+  ConfigRuleForEFSAccessPointEnforceRootDirectoryCondition:
+    !Not [!Equals [!Ref approvedDirectories, ""]]
+  ConfigRuleForEFSAccessPointEnforceRootDirectoryCondition: !And
+    - !Not [!Equals [!Ref approvedUids, ""]]
+    - !Not [!Equals [!Ref approvedGids, ""]]
+  ConfigRuleForEFSEncryptedCheckCondition:
+    !Not [!Equals [!Ref KmsKeyId, ""]]
+
+
+
+
+
+
+Resources: 
+  ConfigRuleForEC2ManagedInstancePlatformCheck: 
+    Condition: EC2ManagedInstancePlatformCheckCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2ManagedInstancePlatformCheck"
+      Description: "Checks whether your EC2 instances are of the specified instance types."
+      InputParameters: |
+        platformType: !Ref platformType
+        platformVersion: !Ref platformVersion
+        agentVersion: !Ref agentVersion
+        platformName: !Ref platformName
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::SSM::ManagedInstanceInventory"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_MANAGEDINSTANCE_PLATFORM_CHECK"
+  ConfigRuleForEC2NoAmazonKeyPair: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2NoAmazonKeyPair"
+      Description: "Checks if running Amazon Elastic Compute Cloud (EC2) instances are launched using amazon key pairs. The rule is NON_COMPLIANT if a running EC2 instance is launched with a key pair."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_NO_AMAZON_KEY_PAIR"
+  ConfigRuleForEC2ResourcesProtectedbyBackupPlan: 
+    Condition: EC2ResourcesProtectedbyBackupPlanCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2ResourcesProtectedbyBackupPlan"
+      Description: "Checks if Amazon Elastic Compute Cloud (Amazon EC2) instances are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon EC2 instance is not covered by a backup plan."
+      InputParameters: |
+        resourceTags: !Ref resourceTags
+        resourceId: !Ref resourceId
+        crossRegionList: !Ref crossRegionList
+        crossAccountList: !Ref crossAccountList
+        maxRetentionDays: !Ref maxRetentionDays
+        minRetentionDays: !Ref minRetentionDays
+        backupVaultLockCheck: !Ref backupVaultLockCheck
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+  ConfigRuleForEC2StoppedInstance: 
+    Condition: ConfigRuleForEC2StoppedInstanceCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2StoppedInstance"
+      Description: "Checks whether there are instances stopped for more than the allowed number of days."
+      InputParameters: |
+        AllowedDays: !Ref AllowedDays
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Instance"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_STOPPED_INSTANCE"
+  ConfigRuleForEC2TransitGatewayAutoVPCAttachDisabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2TransitGatewayAutoVPCAttachDisabled"
+      Description: "Checks if Amazon Elastic Compute Cloud (Amazon EC2) Transit Gateways have \u0027AutoAcceptSharedAttachments\u0027 enabled. The rule is NON_COMPLIANT for a Transit Gateway if \u0027AutoAcceptSharedAttachments\u0027 is set to \u0027enable\u0027."
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::TransitGateway"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_TRANSIT_GATEWAY_AUTO_VPC_ATTACH_DISABLED"
+  ConfigRuleForEC2VolumeInUseCheck: 
+    Condition: ConfigRuleForEC2VolumeInUseCheckCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2VolumeInUseCheck"
+      Description: "Checks whether EBS volumes are attached to EC2 instances."
+      InputParameters: |
+        deleteOnTermination: !Ref deleteOnTermination
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::Volume"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_VOLUME_INUSE_CHECK"
+  ConfigRuleForEFSAccessPointEnforceRootDirectory: 
+    Condition: ConfigRuleForEFSAccessPointEnforceRootDirectoryCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEFSAccessPointEnforceRootDirectory"
+      Description: "Checks if Amazon Elastic File System (Amazon EFS) access points are configured to enforce a root directory. The rule is NON_COMPLIANT if the value of \u0027Path\u0027 is set to \u0027/\u0027 (default root directory of the file system)."
+      InputParameters: |
+        approvedDirectories: !Ref approvedDirectories
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EFS::AccessPoint"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EFS_ACCESS_POINT_ENFORCE_ROOT_DIRECTORY"
+  ConfigRuleForEFSAccessPointEnforceUserIdentity: 
+    Condition: ConfigRuleForEFSAccessPointEnforceUserIdentityCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEFSAccessPointEnforceUserIdentity"
+      Description: "Checks if Amazon Elastic File System (Amazon EFS) access points are configured to enforce a user identity. The rule is NON_COMPLIANT if \u0027PosixUser\u0027 is not defined or if parameters are provided and there is no match in the corresponding parameter."
+      InputParameters: |
+        approvedUids: !Ref approvedUids
+        approvedGids: !Ref approvedGids
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EFS::AccessPoint"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EFS_ACCESS_POINT_ENFORCE_USER_IDENTITY"
+  ConfigRuleForEFSEncryptedCheck: 
+    Condition: ConfigRuleForEFSEncryptedCheckCondition
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEFSEncryptedCheck"
+      Description: "Checks whether Amazon EFS are configured to encrypt file data using AWS KMS. The rule is NON_COMPLIANT if the Encrypted key is set to False on DescribeFileSystems or, if specified, KmsKeyId key on DescribeFileSystems is not matching KmsKeyId parameter."
+      InputParameters: |
+        KmsKeyId: !Ref KmsKeyId
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EFS_ENCRYPTED_CHECK"
+  ConfigRuleForEFSInBackupPlan: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEFSInBackupPlan"
+      Description: "Checks whether Amazon Elastic File System (Amazon EFS) file systems are added in the backup plans of AWS Backup. The rule is NON_COMPLIANT if EFS file systems are not included in the backup plans."
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EFS_IN_BACKUP_PLAN"
