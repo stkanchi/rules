@@ -1,0 +1,45 @@
+Resources:
+  AWSConfigRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: !Ref 'ConfigRuleName'
+      Description: >-
+        Checks if Amazon EC2 Launch Templates are set to assign public IP addresses to Network Interfaces. The rule is NON_COMPLIANT if the default version of an EC2 Launch Template has at least 1 Network
+        Interface with 'AssociatePublicIpAddress' set to 'true'.
+      InputParameters:
+        exemptedLaunchTemplates: !If
+          - exemptedLaunchTemplates
+          - !Ref 'exemptedLaunchTemplates'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::LaunchTemplate
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAUNCH_TEMPLATE_PUBLIC_IP_DISABLED
+Parameters:
+  ConfigRuleName:
+    Type: String
+    Default: ec2-launch-template-public-ip-disabled
+    Description: The name that you assign to the AWS Config rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  exemptedLaunchTemplates:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of exempted EC2 Launch Template IDs that are allowed to have Network Interfaces with the AssociatePublicIpAddress value set to 'true'.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Required
+        Parameters: []
+      - Label:
+          default: Optional
+        Parameters:
+          - exemptedLaunchTemplates
+Conditions:
+  exemptedLaunchTemplates: !Not
+    - !Equals
+      - ''
+      - !Ref 'exemptedLaunchTemplates'
