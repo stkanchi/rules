@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CFT Template for creation of AWS Config Rule"
+Parameters:
+    exemptedLaunchTemplatesTest:
+    Type: "String"
+    Default: ""
+    Description: "Comma-separated list of exempted EC2 Launch Template IDs that are allowed to have Network Interfaces with the AssociatePublicIpAddress value set to \u0027true\u0027."
+Resources: 
+  ConfigRuleForEC2LaunchTemplatePublicIpDisabled: 
+    Type: AWS::Config::ConfigRule
+    Properties: 
+      ConfigRuleName: "ConfigRuleForEC2LaunchTemplatePublicIpDisabled"
+      Description: "Checks if Amazon EC2 Launch Templates are set to assign public IP addresses to Network Interfaces. The rule is NON_COMPLIANT if the default version of an EC2 Launch Template has at least 1 Network Interface with \u0027AssociatePublicIpAddress\u0027 set to \u0027true\u0027."
+      InputParameters: |
+        exemptedLaunchTemplatesTest: !Ref exemptedLaunchTemplatesTest
+      Scope:
+        ComplianceResourceTypes: [
+          "AWS::EC2::LaunchTemplate"
+        ]
+      Source:
+        Owner: "AWS"
+        SourceIdentifier: "EC2_LAUNCH_TEMPLATE_PUBLIC_IP_DISABLED"
