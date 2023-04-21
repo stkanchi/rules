@@ -1,0 +1,887 @@
+Resources:
+  ACCESSKEYSROTATED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: access-keys-rotated
+      Description: >-
+        Checks whether the active access keys are rotated within the number of days specified in maxAccessKeyAge. The rule is non-compliant if the access keys have not been rotated for more than maxAccessKeyAge
+        number of days.
+      InputParameters:
+        accesskeysrotatedmaxAccessKeyAge: !If
+          - accesskeysrotatedmaxAccessKeyAge
+          - !Ref 'accesskeysrotatedmaxAccessKeyAge'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: ACCESS_KEYS_ROTATED
+      MaximumExecutionFrequency: !Ref 'accesskeysrotatedmaximumexecutionfrequency'
+  ACCOUNTPARTOFORGANIZATIONS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: account-part-of-organizations
+      Description: >-
+        Rule checks whether AWS account is part of AWS Organizations. The rule is NON_COMPLIANT if the AWS account is not part of AWS Organizations or AWS Organizations master account ID does not match
+        rule parameter MasterAccountId.
+      InputParameters:
+        accountpartoforganizationsMasterAccountId: !If
+          - accountpartoforganizationsMasterAccountId
+          - !Ref 'accountpartoforganizationsMasterAccountId'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: ACCOUNT_PART_OF_ORGANIZATIONS
+      MaximumExecutionFrequency: !Ref 'accountpartoforganizationsmaximumexecutionfrequency'
+  ALBHTTPTOHTTPSREDIRECTIONCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: alb-http-to-https-redirection-check
+      Description: >-
+        Checks whether HTTP to HTTPS redirection is configured on all HTTP listeners of Application Load Balancers. The rule is NON_COMPLIANT if one or more HTTP listeners of Application Load Balancer do
+        not have HTTP to HTTPS redirection configured.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: ALB_HTTP_TO_HTTPS_REDIRECTION_CHECK
+      MaximumExecutionFrequency: !Ref 'albhttptohttpsredirectioncheckmaximumexecutionfrequency'
+  ALBWAFENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: alb-waf-enabled
+      Description: 'Checks if Web Application Firewall (WAF) is enabled on Application Load Balancers (ALBs). This rule is NON_COMPLIANT if key: waf.enabled is set to false.'
+      InputParameters:
+        albwafenabledwafWebAclIds: !If
+          - albwafenabledwafWebAclIds
+          - !Ref 'albwafenabledwafWebAclIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ElasticLoadBalancingV2::LoadBalancer
+      Source:
+        Owner: AWS
+        SourceIdentifier: ALB_WAF_ENABLED
+  APPROVEDAMISBYID:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: approved-amis-by-id
+      Description: Checks whether running instances are using specified AMIs.
+      InputParameters:
+        approvedamisbyidamiIds: !If
+          - approvedamisbyidamiIds
+          - !Ref 'approvedamisbyidamiIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: APPROVED_AMIS_BY_ID
+  APPROVEDAMISBYTAG:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: approved-amis-by-tag
+      Description: Checks whether running instances are using specified AMIs.
+      InputParameters:
+        approvedamisbytagamisByTagKeyAndValue: !If
+          - approvedamisbytagamisByTagKeyAndValue
+          - !Ref 'approvedamisbytagamisByTagKeyAndValue'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: APPROVED_AMIS_BY_TAG
+  BACKUPPLANMINFREQUENCYANDMINRETENTIONCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-plan-min-frequency-and-min-retention-check
+      Description: >-
+        Checks if a backup plan has a backup rule that satisfies the required frequency and retention period. The rule is NON_COMPLIANT if recovery points are not created at least as often as the specified
+        frequency or expire before the specified period.
+      InputParameters:
+        backupplanminfrequencyandminretentioncheckrequiredFrequencyValue: !If
+          - backupplanminfrequencyandminretentioncheckrequiredFrequencyValue
+          - !Ref 'backupplanminfrequencyandminretentioncheckrequiredFrequencyValue'
+          - !Ref 'AWS::NoValue'
+        backupplanminfrequencyandminretentioncheckrequiredRetentionDays: !If
+          - backupplanminfrequencyandminretentioncheckrequiredRetentionDays
+          - !Ref 'backupplanminfrequencyandminretentioncheckrequiredRetentionDays'
+          - !Ref 'AWS::NoValue'
+        backupplanminfrequencyandminretentioncheckrequiredFrequencyUnit: !If
+          - backupplanminfrequencyandminretentioncheckrequiredFrequencyUnit
+          - !Ref 'backupplanminfrequencyandminretentioncheckrequiredFrequencyUnit'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Backup::BackupPlan
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_PLAN_MIN_FREQUENCY_AND_MIN_RETENTION_CHECK
+  BACKUPRECOVERYPOINTENCRYPTED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-recovery-point-encrypted
+      Description: Checks if a recovery point is encrypted. The rule is NON_COMPLIANT if the recovery point is not encrypted.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Backup::RecoveryPoint
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_RECOVERY_POINT_ENCRYPTED
+  BACKUPRECOVERYPOINTMANUALDELETIONDISABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-recovery-point-manual-deletion-disabled
+      Description: >-
+        Checks if a backup vault has an attached resource-based policy which prevents deletion of recovery points. The rule is NON_COMPLIANT if the Backup Vault does not have resource-based policies or
+        has policies without a suitable 'Deny' statement.
+      InputParameters:
+        backuprecoverypointmanualdeletiondisabledprincipalArnList: !If
+          - backuprecoverypointmanualdeletiondisabledprincipalArnList
+          - !Ref 'backuprecoverypointmanualdeletiondisabledprincipalArnList'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Backup::BackupVault
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_RECOVERY_POINT_MANUAL_DELETION_DISABLED
+  BACKUPRECOVERYPOINTMINIMUMRETENTIONCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-recovery-point-minimum-retention-check
+      Description: Checks if a recovery point expires no earlier than after the specified period. The rule is NON_COMPLIANT if the recovery point has a retention point that is less than the required retention
+        period.
+      InputParameters:
+        backuprecoverypointminimumretentioncheckrequiredRetentionDays: !If
+          - backuprecoverypointminimumretentioncheckrequiredRetentionDays
+          - !Ref 'backuprecoverypointminimumretentioncheckrequiredRetentionDays'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Backup::RecoveryPoint
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_RECOVERY_POINT_MINIMUM_RETENTION_CHECK
+  CLOUDFORMATIONSTACKDRIFTDETECTIONCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudformation-stack-drift-detection-check
+      Description: Checks whether your CloudFormation stacks' actual configuration differs, or has drifted, from its expected configuration.
+      InputParameters:
+        cloudformationstackdriftdetectioncheckcloudformationRoleArn: !If
+          - cloudformationstackdriftdetectioncheckcloudformationRoleArn
+          - !Ref 'cloudformationstackdriftdetectioncheckcloudformationRoleArn'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::CloudFormation::Stack
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDFORMATION_STACK_DRIFT_DETECTION_CHECK
+      MaximumExecutionFrequency: !Ref 'cloudformationstackdriftdetectioncheckmaximumexecutionfrequency'
+  CLOUDTRAILCLOUDWATCHLOGSENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-cloud-watch-logs-enabled
+      Description: Checks whether AWS CloudTrail trails are configured to send logs to Amazon CloudWatch logs. The trail is non-compliant if the CloudWatchLogsLogGroupArn property of the trail is empty.
+      InputParameters:
+        cloudtrailcloudwatchlogsenabledexpectedDeliveryWindowAge: !If
+          - cloudtrailcloudwatchlogsenabledexpectedDeliveryWindowAge
+          - !Ref 'cloudtrailcloudwatchlogsenabledexpectedDeliveryWindowAge'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_CLOUD_WATCH_LOGS_ENABLED
+      MaximumExecutionFrequency: !Ref 'cloudtrailcloudwatchlogsenabledmaximumexecutionfrequency'
+  EBSINBACKUPPLAN:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-in-backup-plan
+      Description: Check if Amazon Elastic Block Store (Amazon EBS) volumes are added in backup plans of AWS Backup. The rule is NON_COMPLIANT if Amazon EBS volumes are not included in backup plans.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_IN_BACKUP_PLAN
+      MaximumExecutionFrequency: !Ref 'ebsinbackupplanmaximumexecutionfrequency'
+  EBSLASTBACKUPRECOVERYPOINTCREATED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-last-backup-recovery-point-created
+      Description: >-
+        Checks if a recovery point was created for Amazon Elastic Block Store (Amazon EBS). The rule is NON_COMPLIANT if the Amazon EBS volume does not have a corresponding recovery point created within
+        the specified time period.
+      InputParameters:
+        ebslastbackuprecoverypointcreatedresourceTags: !If
+          - ebslastbackuprecoverypointcreatedresourceTags
+          - !Ref 'ebslastbackuprecoverypointcreatedresourceTags'
+          - !Ref 'AWS::NoValue'
+        ebslastbackuprecoverypointcreatedresourceId: !If
+          - ebslastbackuprecoverypointcreatedresourceId
+          - !Ref 'ebslastbackuprecoverypointcreatedresourceId'
+          - !Ref 'AWS::NoValue'
+        ebslastbackuprecoverypointcreatedrecoveryPointAgeValue: !If
+          - ebslastbackuprecoverypointcreatedrecoveryPointAgeValue
+          - !Ref 'ebslastbackuprecoverypointcreatedrecoveryPointAgeValue'
+          - !Ref 'AWS::NoValue'
+        ebslastbackuprecoverypointcreatedrecoveryPointAgeUnit: !If
+          - ebslastbackuprecoverypointcreatedrecoveryPointAgeUnit
+          - !Ref 'ebslastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_LAST_BACKUP_RECOVERY_POINT_CREATED
+      MaximumExecutionFrequency: !Ref 'ebslastbackuprecoverypointcreatedmaximumexecutionfrequency'
+  EBSOPTIMIZEDINSTANCE:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-optimized-instance
+      Description: Checks whether EBS optimization is enabled for your EC2 instances that can be EBS-optimized.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_OPTIMIZED_INSTANCE
+  EBSRESOURCESPROTECTEDBYBACKUPPLAN:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-resources-protected-by-backup-plan
+      Description: Checks if Amazon Elastic Block Store (Amazon EBS) volumes are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon EBS volume is not covered by a backup plan.
+      InputParameters:
+        ebsresourcesprotectedbybackupplanresourceTags: !If
+          - ebsresourcesprotectedbybackupplanresourceTags
+          - !Ref 'ebsresourcesprotectedbybackupplanresourceTags'
+          - !Ref 'AWS::NoValue'
+        ebsresourcesprotectedbybackupplanresourceId: !If
+          - ebsresourcesprotectedbybackupplanresourceId
+          - !Ref 'ebsresourcesprotectedbybackupplanresourceId'
+          - !Ref 'AWS::NoValue'
+        ebsresourcesprotectedbybackupplancrossRegionList: !If
+          - ebsresourcesprotectedbybackupplancrossRegionList
+          - !Ref 'ebsresourcesprotectedbybackupplancrossRegionList'
+          - !Ref 'AWS::NoValue'
+        ebsresourcesprotectedbybackupplancrossAccountList: !If
+          - ebsresourcesprotectedbybackupplancrossAccountList
+          - !Ref 'ebsresourcesprotectedbybackupplancrossAccountList'
+          - !Ref 'AWS::NoValue'
+        ebsresourcesprotectedbybackupplanmaxRetentionDays: !If
+          - ebsresourcesprotectedbybackupplanmaxRetentionDays
+          - !Ref 'ebsresourcesprotectedbybackupplanmaxRetentionDays'
+          - !Ref 'AWS::NoValue'
+        ebsresourcesprotectedbybackupplanminRetentionDays: !If
+          - ebsresourcesprotectedbybackupplanminRetentionDays
+          - !Ref 'ebsresourcesprotectedbybackupplanminRetentionDays'
+          - !Ref 'AWS::NoValue'
+        ebsresourcesprotectedbybackupplanbackupVaultLockCheck: !If
+          - ebsresourcesprotectedbybackupplanbackupVaultLockCheck
+          - !Ref 'ebsresourcesprotectedbybackupplanbackupVaultLockCheck'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+      MaximumExecutionFrequency: !Ref 'ebsresourcesprotectedbybackupplanmaximumexecutionfrequency'
+  EBSSNAPSHOTPUBLICRESTORABLECHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-snapshot-public-restorable-check
+      Description: >-
+        Checks whether Amazon Elastic Block Store (Amazon EBS) snapshots are not publicly restorable. The rule is NON_COMPLIANT if one or more snapshots with RestorableByUserIds field are set to all, that
+        is, Amazon EBS snapshots are public.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_SNAPSHOT_PUBLIC_RESTORABLE_CHECK
+      MaximumExecutionFrequency: !Ref 'ebssnapshotpublicrestorablecheckmaximumexecutionfrequency'
+  EC2EBSENCRYPTIONBYDEFAULT:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-ebs-encryption-by-default
+      Description: Check that Amazon Elastic Block Store (EBS) encryption is enabled by default. The rule is NON_COMPLIANT if the encryption is not enabled.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_EBS_ENCRYPTION_BY_DEFAULT
+      MaximumExecutionFrequency: !Ref 'ec2ebsencryptionbydefaultmaximumexecutionfrequency'
+  CLOUDTRAILENCRYPTIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-encryption-enabled
+      Description: >-
+        Checks whether AWS CloudTrail is configured to use the server side encryption (SSE) AWS Key Management Service (AWS KMS) customer master key (CMK) encryption. The rule is compliant if the KmsKeyId
+        is defined.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENCRYPTION_ENABLED
+      MaximumExecutionFrequency: !Ref 'cloudtrailencryptionenabledmaximumexecutionfrequency'
+  CLOUDTRAILLOGFILEVALIDATIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-log-file-validation-enabled
+      Description: Checks whether AWS CloudTrail creates a signed digest file with logs. AWS recommends that the file validation must be enabled on all trails. The rule is noncompliant if the validation
+        is not enabled.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED
+      MaximumExecutionFrequency: !Ref 'cloudtraillogfilevalidationenabledmaximumexecutionfrequency'
+  CLOUDTRAILS3DATAEVENTSENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-s3-dataevents-enabled
+      Description: Checks whether at least one AWS CloudTrail trail is logging Amazon S3 data events for all S3 buckets. The rule is NON_COMPLIANT if trails log data events for S3 buckets is not configured.
+      InputParameters:
+        cloudtrails3dataeventsenabledS3BucketNames: !If
+          - cloudtrails3dataeventsenabledS3BucketNames
+          - !Ref 'cloudtrails3dataeventsenabledS3BucketNames'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_S3_DATAEVENTS_ENABLED
+      MaximumExecutionFrequency: !Ref 'cloudtrails3dataeventsenabledmaximumexecutionfrequency'
+  CLOUDWATCHLOGGROUPENCRYPTED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudwatch-log-group-encrypted
+      Description: >-
+        Checks if Amazon CloudWatch Log Groups are encrypted with any AWS KMS key or a specified AWS KMS key Id. The rule is NON_COMPLIANT if a CloudWatch Log Group is not encrypted with a KMS key or is
+        encrypted with a KMS key not supplied in the rule parameter.
+      InputParameters:
+        cloudwatchloggroupencryptedKmsKeyId: !If
+          - cloudwatchloggroupencryptedKmsKeyId
+          - !Ref 'cloudwatchloggroupencryptedKmsKeyId'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDWATCH_LOG_GROUP_ENCRYPTED
+      MaximumExecutionFrequency: !Ref 'cloudwatchloggroupencryptedmaximumexecutionfrequency'
+  CMKBACKINGKEYROTATIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cmk-backing-key-rotation-enabled
+      Description: >-
+        Checks if automatic key rotation is enabled for each key and matches to the key ID of the customer created AWS KMS key. The rule is NON_COMPLIANT if the AWS Config recorder role for a resource does
+        not have the kms:DescribeKey permission.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: CMK_BACKING_KEY_ROTATION_ENABLED
+      MaximumExecutionFrequency: !Ref 'cmkbackingkeyrotationenabledmaximumexecutionfrequency'
+  CWLOGGROUPRETENTIONPERIODCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cw-loggroup-retention-period-check
+      Description: >-
+        Checks whether Amazon CloudWatch LogGroup retention period is set to specific number of days. The rule is NON_COMPLIANT if the retention period is not set or is less than the configured retention
+        period.
+      InputParameters:
+        cwloggroupretentionperiodcheckLogGroupNames: !If
+          - cwloggroupretentionperiodcheckLogGroupNames
+          - !Ref 'cwloggroupretentionperiodcheckLogGroupNames'
+          - !Ref 'AWS::NoValue'
+        cwloggroupretentionperiodcheckMinRetentionTime: !If
+          - cwloggroupretentionperiodcheckMinRetentionTime
+          - !Ref 'cwloggroupretentionperiodcheckMinRetentionTime'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: CW_LOGGROUP_RETENTION_PERIOD_CHECK
+      MaximumExecutionFrequency: !Ref 'cwloggroupretentionperiodcheckmaximumexecutionfrequency'
+  DBINSTANCEBACKUPENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: db-instance-backup-enabled
+      Description: Checks whether RDS DB instances have backups enabled.
+      InputParameters:
+        dbinstancebackupenabledbackupRetentionPeriod: !If
+          - dbinstancebackupenabledbackupRetentionPeriod
+          - !Ref 'dbinstancebackupenabledbackupRetentionPeriod'
+          - !Ref 'AWS::NoValue'
+        dbinstancebackupenabledbackupRetentionMinimum: !If
+          - dbinstancebackupenabledbackupRetentionMinimum
+          - !Ref 'dbinstancebackupenabledbackupRetentionMinimum'
+          - !Ref 'AWS::NoValue'
+        dbinstancebackupenabledpreferredBackupWindow: !If
+          - dbinstancebackupenabledpreferredBackupWindow
+          - !Ref 'dbinstancebackupenabledpreferredBackupWindow'
+          - !Ref 'AWS::NoValue'
+        dbinstancebackupenabledcheckReadReplicas: !If
+          - dbinstancebackupenabledcheckReadReplicas
+          - !Ref 'dbinstancebackupenabledcheckReadReplicas'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: DB_INSTANCE_BACKUP_ENABLED
+Parameters:
+  accesskeysrotatedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  accesskeysrotatedmaxAccessKeyAge:
+    Type: String
+    Default: '90'
+    Description: Maximum number of days without rotation. Default 90.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  accountpartoforganizationsMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  accountpartoforganizationsMasterAccountId:
+    Type: String
+    Default: ''
+    Description: The master account ID for an AWS account.
+  albhttptohttpsredirectioncheckMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  albwafenabledwafWebAclIds:
+    Type: String
+    Default: ''
+    Description: Comma separated list of web ACL ID (for WAF) or web ACL ARN (for WAFV2) checking for ALB association.
+  approvedamisbyidamiIds:
+    Type: String
+    Description: Specify AMI IDs (comma separated list of up to 10).
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  approvedamisbytagamisByTagKeyAndValue:
+    Type: String
+    Default: tag-key:tag-value,other-tag-key
+    Description: Specify AMIs by tag (comma separated list up to 10; for example, 'tag-key:tag-value').
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  backupplanminfrequencyandminretentioncheckrequiredFrequencyValue:
+    Type: String
+    Default: '1'
+    Description: Numerical value for required backup frequency. Maximum of 24 for hours, 31 for days.
+  backupplanminfrequencyandminretentioncheckrequiredRetentionDays:
+    Type: String
+    Default: '35'
+    Description: Required retention period in days.
+  backupplanminfrequencyandminretentioncheckrequiredFrequencyUnit:
+    Type: String
+    Default: days
+    Description: 'Unit of time for required backup frequency. Accepted values: ''hours'', ''days''.'
+  backuprecoverypointmanualdeletiondisabledprincipalArnList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of AWS Identity and Access Management (IAM) Amazon Resource Names (ARNs) for the rule to NOT check.
+  backuprecoverypointminimumretentioncheckrequiredRetentionDays:
+    Type: String
+    Default: '35'
+    Description: Required retention period in days.
+  cloudformationstackdriftdetectioncheckMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cloudformationstackdriftdetectioncheckcloudformationRoleArn:
+    Type: String
+    Description: The AWS CloudFormation role ARN with IAM policy permissions to detect drift for AWS CloudFormation Stacks
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  cloudtrailcloudwatchlogsenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cloudtrailcloudwatchlogsenabledexpectedDeliveryWindowAge:
+    Type: String
+    Default: ''
+    Description: Maximum age in hours of the most recent delivery to CloudWatch logs that satisfies compliance.
+  ebsinbackupplanMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  ebslastbackuprecoverypointcreatedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  ebslastbackuprecoverypointcreatedresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags of Amazon EBS volumes for the rule to check, in JSON format.
+  ebslastbackuprecoverypointcreatedresourceId:
+    Type: String
+    Default: ''
+    Description: ID of Amazon EBS volume for the rule to check.
+  ebslastbackuprecoverypointcreatedrecoveryPointAgeValue:
+    Type: String
+    Default: '1'
+    Description: Numerical value for maximum allowed age. No more than 744 for hours, 31 for days.
+  ebslastbackuprecoverypointcreatedrecoveryPointAgeUnit:
+    Type: String
+    Default: days
+    Description: 'Unit of time for maximum allowed age. Accepted values: ''hours'', ''days''.'
+  ebsresourcesprotectedbybackupplanMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  ebsresourcesprotectedbybackupplanresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags for Amazon EBS volumes for the rule to check, in JSON format.
+  ebsresourcesprotectedbybackupplanresourceId:
+    Type: String
+    Default: ''
+    Description: ID of Amazon EBS volume for the rule to check.
+  ebsresourcesprotectedbybackupplancrossRegionList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination regions for the cross-region backup copy to be kept
+  ebsresourcesprotectedbybackupplancrossAccountList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination accounts for cross-account backup copy to be kept
+  ebsresourcesprotectedbybackupplanmaxRetentionDays:
+    Type: String
+    Default: ''
+    Description: The maximum retention period in days for the Backup Vault Lock
+  ebsresourcesprotectedbybackupplanminRetentionDays:
+    Type: String
+    Default: ''
+    Description: The minimum retention period in days for the Backup Vault Lock
+  ebsresourcesprotectedbybackupplanbackupVaultLockCheck:
+    Type: String
+    Default: ''
+    Description: 'Accepted values: ''True'' or ''False''. Enter ''True'' for the rule to check if the resource is backed up in a locked vault'
+  ebssnapshotpublicrestorablecheckMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  ec2ebsencryptionbydefaultMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cloudtrailencryptionenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cloudtraillogfilevalidationenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cloudtrails3dataeventsenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cloudtrails3dataeventsenabledS3BucketNames:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of S3 bucket names for which data events logging should be enabled. Default behavior checks for all S3 buckets.
+  cloudwatchloggroupencryptedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cloudwatchloggroupencryptedKmsKeyId:
+    Type: String
+    Default: ''
+    Description: Amazon Resource Name (ARN) of the ID for the KMS key that is used to encrypt the log group.
+  cmkbackingkeyrotationenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cwloggroupretentionperiodcheckMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  cwloggroupretentionperiodcheckLogGroupNames:
+    Type: String
+    Default: ''
+    Description: A comma-separated list of Log Group names to check the retention period.
+  cwloggroupretentionperiodcheckMinRetentionTime:
+    Type: String
+    Default: ''
+    Description: 'Specify the retention time. Valid values are: 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, and 3653. The default retention period is 365 days.'
+  dbinstancebackupenabledbackupRetentionPeriod:
+    Type: String
+    Default: ''
+    Description: Retention period for backups.
+  dbinstancebackupenabledbackupRetentionMinimum:
+    Type: String
+    Default: ''
+    Description: Minimum retention period for backups.
+  dbinstancebackupenabledpreferredBackupWindow:
+    Type: String
+    Default: ''
+    Description: Time range in which backups are created.
+  dbinstancebackupenabledcheckReadReplicas:
+    Type: String
+    Default: ''
+    Description: Checks whether RDS DB instances have backups enabled for read replicas.
+Conditions:
+  accesskeysrotatedmaxAccessKeyAge: !Not
+    - !Equals
+      - ''
+      - !Ref 'accesskeysrotatedmaxAccessKeyAge'
+  accountpartoforganizationsMasterAccountId: !Not
+    - !Equals
+      - ''
+      - !Ref 'accountpartoforganizationsMasterAccountId'
+  albwafenabledwafWebAclIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'albwafenabledwafWebAclIds'
+  approvedamisbyidamiIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'approvedamisbyidamiIds'
+  approvedamisbytagamisByTagKeyAndValue: !Not
+    - !Equals
+      - ''
+      - !Ref 'approvedamisbytagamisByTagKeyAndValue'
+  backupplanminfrequencyandminretentioncheckrequiredFrequencyValue: !Not
+    - !Equals
+      - ''
+      - !Ref 'backupplanminfrequencyandminretentioncheckrequiredFrequencyValue'
+  backupplanminfrequencyandminretentioncheckrequiredRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'backupplanminfrequencyandminretentioncheckrequiredRetentionDays'
+  backupplanminfrequencyandminretentioncheckrequiredFrequencyUnit: !Not
+    - !Equals
+      - ''
+      - !Ref 'backupplanminfrequencyandminretentioncheckrequiredFrequencyUnit'
+  backuprecoverypointmanualdeletiondisabledprincipalArnList: !Not
+    - !Equals
+      - ''
+      - !Ref 'backuprecoverypointmanualdeletiondisabledprincipalArnList'
+  backuprecoverypointminimumretentioncheckrequiredRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'backuprecoverypointminimumretentioncheckrequiredRetentionDays'
+  cloudformationstackdriftdetectioncheckcloudformationRoleArn: !Not
+    - !Equals
+      - ''
+      - !Ref 'cloudformationstackdriftdetectioncheckcloudformationRoleArn'
+  cloudtrailcloudwatchlogsenabledexpectedDeliveryWindowAge: !Not
+    - !Equals
+      - ''
+      - !Ref 'cloudtrailcloudwatchlogsenabledexpectedDeliveryWindowAge'
+  ebslastbackuprecoverypointcreatedresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebslastbackuprecoverypointcreatedresourceTags'
+  ebslastbackuprecoverypointcreatedresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebslastbackuprecoverypointcreatedresourceId'
+  ebslastbackuprecoverypointcreatedrecoveryPointAgeValue: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebslastbackuprecoverypointcreatedrecoveryPointAgeValue'
+  ebslastbackuprecoverypointcreatedrecoveryPointAgeUnit: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebslastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+  ebsresourcesprotectedbybackupplanresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebsresourcesprotectedbybackupplanresourceTags'
+  ebsresourcesprotectedbybackupplanresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebsresourcesprotectedbybackupplanresourceId'
+  ebsresourcesprotectedbybackupplancrossRegionList: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebsresourcesprotectedbybackupplancrossRegionList'
+  ebsresourcesprotectedbybackupplancrossAccountList: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebsresourcesprotectedbybackupplancrossAccountList'
+  ebsresourcesprotectedbybackupplanmaxRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebsresourcesprotectedbybackupplanmaxRetentionDays'
+  ebsresourcesprotectedbybackupplanminRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebsresourcesprotectedbybackupplanminRetentionDays'
+  ebsresourcesprotectedbybackupplanbackupVaultLockCheck: !Not
+    - !Equals
+      - ''
+      - !Ref 'ebsresourcesprotectedbybackupplanbackupVaultLockCheck'
+  cloudtrails3dataeventsenabledS3BucketNames: !Not
+    - !Equals
+      - ''
+      - !Ref 'cloudtrails3dataeventsenabledS3BucketNames'
+  cloudwatchloggroupencryptedKmsKeyId: !Not
+    - !Equals
+      - ''
+      - !Ref 'cloudwatchloggroupencryptedKmsKeyId'
+  cwloggroupretentionperiodcheckLogGroupNames: !Not
+    - !Equals
+      - ''
+      - !Ref 'cwloggroupretentionperiodcheckLogGroupNames'
+  cwloggroupretentionperiodcheckMinRetentionTime: !Not
+    - !Equals
+      - ''
+      - !Ref 'cwloggroupretentionperiodcheckMinRetentionTime'
+  dbinstancebackupenabledbackupRetentionPeriod: !Not
+    - !Equals
+      - ''
+      - !Ref 'dbinstancebackupenabledbackupRetentionPeriod'
+  dbinstancebackupenabledbackupRetentionMinimum: !Not
+    - !Equals
+      - ''
+      - !Ref 'dbinstancebackupenabledbackupRetentionMinimum'
+  dbinstancebackupenabledpreferredBackupWindow: !Not
+    - !Equals
+      - ''
+      - !Ref 'dbinstancebackupenabledpreferredBackupWindow'
+  dbinstancebackupenabledcheckReadReplicas: !Not
+    - !Equals
+      - ''
+      - !Ref 'dbinstancebackupenabledcheckReadReplicas'

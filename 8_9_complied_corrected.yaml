@@ -1,0 +1,576 @@
+Resources:
+  IAMUSERMFAENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-mfa-enabled
+      Description: Checks whether the AWS Identity and Access Management users have multi-factor authentication (MFA) enabled.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_MFA_ENABLED
+      MaximumExecutionFrequency: !Ref 'iamusermfaenabledmaximumexecutionfrequency'
+  IAMUSERNOPOLICIESCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-no-policies-check
+      Description: Checks that none of your IAM users have policies attached. IAM users must inherit permissions from IAM groups or roles.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::IAM::User
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_NO_POLICIES_CHECK
+  IAMUSERUNUSEDCREDENTIALSCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-unused-credentials-check
+      Description: Checks whether your AWS Identity and Access Management (IAM) users have passwords or active access keys that have not been used within the specified number of days you provided.
+      InputParameters:
+        iamuserunusedcredentialscheckmaxCredentialUsageAge: !If
+          - iamuserunusedcredentialscheckmaxCredentialUsageAge
+          - !Ref 'iamuserunusedcredentialscheckmaxCredentialUsageAge'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_UNUSED_CREDENTIALS_CHECK
+      MaximumExecutionFrequency: !Ref 'iamuserunusedcredentialscheckmaximumexecutionfrequency'
+  INTERNETGATEWAYAUTHORIZEDVPCONLY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: internet-gateway-authorized-vpc-only
+      Description: Checks that Internet gateways (IGWs) are only attached to an authorized Amazon Virtual Private Cloud (VPCs). The rule is NON_COMPLIANT if IGWs are not attached to an authorized VPC.
+      InputParameters:
+        internetgatewayauthorizedvpconlyAuthorizedVpcIds: !If
+          - internetgatewayauthorizedvpconlyAuthorizedVpcIds
+          - !Ref 'internetgatewayauthorizedvpconlyAuthorizedVpcIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::InternetGateway
+      Source:
+        Owner: AWS
+        SourceIdentifier: INTERNET_GATEWAY_AUTHORIZED_VPC_ONLY
+  KINESISSTREAMENCRYPTED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: kinesis-stream-encrypted
+      Description: Checks if Amazon Kinesis streams are encrypted at rest with server-side encryption. The rule is NON_COMPLIANT for a Kinesis stream if 'StreamEncryption' is not present.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Kinesis::Stream
+      Source:
+        Owner: AWS
+        SourceIdentifier: KINESIS_STREAM_ENCRYPTED
+  KMSCMKNOTSCHEDULEDFORDELETION:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: kms-cmk-not-scheduled-for-deletion
+      Description: Checks whether customer master keys (CMKs) are not scheduled for deletion in AWS Key Management Service (KMS). The rule is NON_COMPLAINT if CMKs are scheduled for deletion.
+      InputParameters:
+        kmscmknotscheduledfordeletionkmsKeyIds: !If
+          - kmscmknotscheduledfordeletionkmsKeyIds
+          - !Ref 'kmscmknotscheduledfordeletionkmsKeyIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::KMS::Key
+      Source:
+        Owner: AWS
+        SourceIdentifier: KMS_CMK_NOT_SCHEDULED_FOR_DELETION
+      MaximumExecutionFrequency: !Ref 'kmscmknotscheduledfordeletionmaximumexecutionfrequency'
+  LAMBDACONCURRENCYCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: lambda-concurrency-check
+      Description: >-
+        Checks whether the AWS Lambda function is configured with function-level concurrent execution limit. The rule is NON_COMPLIANT if the Lambda function is not configured with function-level concurrent
+        execution limit.
+      InputParameters:
+        lambdaconcurrencycheckConcurrencyLimitLow: !If
+          - lambdaconcurrencycheckConcurrencyLimitLow
+          - !Ref 'lambdaconcurrencycheckConcurrencyLimitLow'
+          - !Ref 'AWS::NoValue'
+        lambdaconcurrencycheckConcurrencyLimitHigh: !If
+          - lambdaconcurrencycheckConcurrencyLimitHigh
+          - !Ref 'lambdaconcurrencycheckConcurrencyLimitHigh'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Lambda::Function
+      Source:
+        Owner: AWS
+        SourceIdentifier: LAMBDA_CONCURRENCY_CHECK
+  LAMBDADLQCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: lambda-dlq-check
+      Description: Checks whether an AWS Lambda function is configured with a dead-letter queue. The rule is NON_COMPLIANT if the Lambda function is not configured with a dead-letter queue.
+      InputParameters:
+        lambdadlqcheckdlqArns: !If
+          - lambdadlqcheckdlqArns
+          - !Ref 'lambdadlqcheckdlqArns'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Lambda::Function
+      Source:
+        Owner: AWS
+        SourceIdentifier: LAMBDA_DLQ_CHECK
+  LAMBDAFUNCTIONPUBLICACCESSPROHIBITED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: lambda-function-public-access-prohibited
+      Description: Checks whether the Lambda function policy prohibits public access.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Lambda::Function
+      Source:
+        Owner: AWS
+        SourceIdentifier: LAMBDA_FUNCTION_PUBLIC_ACCESS_PROHIBITED
+  LAMBDAFUNCTIONSETTINGSCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: lambda-function-settings-check
+      Description: Checks that the AWS Lambda function settings for runtime, role, timeout, and memory size match the expected values.
+      InputParameters:
+        lambdafunctionsettingscheckruntime: !If
+          - lambdafunctionsettingscheckruntime
+          - !Ref 'lambdafunctionsettingscheckruntime'
+          - !Ref 'AWS::NoValue'
+        lambdafunctionsettingscheckrole: !If
+          - lambdafunctionsettingscheckrole
+          - !Ref 'lambdafunctionsettingscheckrole'
+          - !Ref 'AWS::NoValue'
+        lambdafunctionsettingschecktimeout: !If
+          - lambdafunctionsettingschecktimeout
+          - !Ref 'lambdafunctionsettingschecktimeout'
+          - !Ref 'AWS::NoValue'
+        lambdafunctionsettingscheckmemorySize: !If
+          - lambdafunctionsettingscheckmemorySize
+          - !Ref 'lambdafunctionsettingscheckmemorySize'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Lambda::Function
+      Source:
+        Owner: AWS
+        SourceIdentifier: LAMBDA_FUNCTION_SETTINGS_CHECK
+  LAMBDAINSIDEVPC:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: lambda-inside-vpc
+      Description: Checks whether an AWS Lambda function is in an Amazon Virtual Private Cloud. The rule is NON_COMPLIANT if the Lambda function is not in a VPC.
+      InputParameters:
+        lambdainsidevpcsubnetIds: !If
+          - lambdainsidevpcsubnetIds
+          - !Ref 'lambdainsidevpcsubnetIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Lambda::Function
+      Source:
+        Owner: AWS
+        SourceIdentifier: LAMBDA_INSIDE_VPC
+  LAMBDAVPCMULTIAZCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: lambda-vpc-multi-az-check
+      Description: >-
+        Checks if Lambda has more than 1 availability zone associated. The rule is NON_COMPLIANT if only 1 availability zone is associated with the Lambda or the number of availability zones associated
+        is less than number specified in the optional parameter.
+      InputParameters:
+        lambdavpcmultiazcheckavailabilityZones: !If
+          - lambdavpcmultiazcheckavailabilityZones
+          - !Ref 'lambdavpcmultiazcheckavailabilityZones'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Lambda::Function
+      Source:
+        Owner: AWS
+        SourceIdentifier: LAMBDA_VPC_MULTI_AZ_CHECK
+  MFAENABLEDFORIAMCONSOLEACCESS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: mfa-enabled-for-iam-console-access
+      Description: Checks whether AWS Multi-Factor Authentication (MFA) is enabled for all AWS Identity and Access Management (IAM) users that use a console password. The rule is compliant if MFA is enabled.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: MFA_ENABLED_FOR_IAM_CONSOLE_ACCESS
+      MaximumExecutionFrequency: !Ref 'mfaenabledforiamconsoleaccessmaximumexecutionfrequency'
+  NACLNOUNRESTRICTEDSSHRDP:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: nacl-no-unrestricted-ssh-rdp
+      Description: >-
+        Checks if default ports for SSH tcp/22 or RDP tcp/3389 ingress traffic for network access control lists (NACLs) is unrestricted. The rule is NON_COMPLIANT if a NACL inbound entry allows a source
+        CIDR block of '0.0.0.0/0' or '::/0' for ports 22 or 3389.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::NetworkAcl
+      Source:
+        Owner: AWS
+        SourceIdentifier: NACL_NO_UNRESTRICTED_SSH_RDP
+  NETFWPOLICYDEFAULTACTIONFRAGMENTPACKETS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: netfw-policy-default-action-fragment-packets
+      Description: >-
+        Checks if an AWS Network Firewall policy is configured with a user defined stateless default action for fragmented packets. The rule is NON_COMPLIANT if stateless default action for fragmented packets
+        does not match with user defined default action.
+      InputParameters:
+        netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions: !If
+          - netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions
+          - !Ref 'netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::NetworkFirewall::FirewallPolicy
+      Source:
+        Owner: AWS
+        SourceIdentifier: NETFW_POLICY_DEFAULT_ACTION_FRAGMENT_PACKETS
+  NETFWPOLICYDEFAULTACTIONFULLPACKETS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: netfw-policy-default-action-full-packets
+      Description: >-
+        Checks if an AWS Network Firewall policy is configured with a user defined default stateless action for full packets. This rule is NON_COMPLIANT if default stateless action for full packets does
+        not match with user defined default stateless action.
+      InputParameters:
+        netfwpolicydefaultactionfullpacketsstatelessDefaultActions: !If
+          - netfwpolicydefaultactionfullpacketsstatelessDefaultActions
+          - !Ref 'netfwpolicydefaultactionfullpacketsstatelessDefaultActions'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::NetworkFirewall::FirewallPolicy
+      Source:
+        Owner: AWS
+        SourceIdentifier: NETFW_POLICY_DEFAULT_ACTION_FULL_PACKETS
+  NETFWPOLICYRULEGROUPASSOCIATED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: netfw-policy-rule-group-associated
+      Description: >-
+        Check AWS Network Firewall policy is associated with stateful OR stateless rule groups. This rule is NON_COMPLIANT if no stateful or stateless rule groups are associated with the Network Firewall
+        policy else COMPLIANT if any one of the rule group exists.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::NetworkFirewall::FirewallPolicy
+      Source:
+        Owner: AWS
+        SourceIdentifier: NETFW_POLICY_RULE_GROUP_ASSOCIATED
+  NETFWSTATELESSRULEGROUPNOTEMPTY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: netfw-stateless-rule-group-not-empty
+      Description: Checks if a Stateless Network Firewall Rule Group contains rules. The rule is NON_COMPLIANT if there are no rules in a Stateless Network Firewall Rule Group.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::NetworkFirewall::RuleGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: NETFW_STATELESS_RULE_GROUP_NOT_EMPTY
+  NLBCROSSZONELOADBALANCINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: nlb-cross-zone-load-balancing-enabled
+      Description: Checks if cross-zone load balancing is enabled on Network Load Balancers (NLBs). The rule is NON_COMPLIANT if cross-zone load balancing is not enabled for an NLB.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ElasticLoadBalancingV2::LoadBalancer
+      Source:
+        Owner: AWS
+        SourceIdentifier: NLB_CROSS_ZONE_LOAD_BALANCING_ENABLED
+  NOUNRESTRICTEDROUTETOIGW:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: no-unrestricted-route-to-igw
+      Description: >-
+        Checks if there are public routes in the route table to an Internet Gateway (IGW). The rule is NON_COMPLIANT if a route to an IGW has a destination CIDR block of '0.0.0.0/0' or '::/0' or if a destination
+        CIDR block does not match the rule parameter.
+      InputParameters:
+        nounrestrictedroutetoigwrouteTableIds: !If
+          - nounrestrictedroutetoigwrouteTableIds
+          - !Ref 'nounrestrictedroutetoigwrouteTableIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::RouteTable
+      Source:
+        Owner: AWS
+        SourceIdentifier: NO_UNRESTRICTED_ROUTE_TO_IGW
+  OPENSEARCHACCESSCONTROLENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-access-control-enabled
+      Description: Checks if Amazon OpenSearch Service domains have fine-grained access control enabled. The rule is NON_COMPLIANT if AdvancedSecurityOptions is not enabled for the OpenSearch Service domain.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_ACCESS_CONTROL_ENABLED
+  OPENSEARCHAUDITLOGGINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-audit-logging-enabled
+      Description: Checks if Amazon OpenSearch Service domains have audit logging enabled. The rule is NON_COMPLIANT if an OpenSearch Service domain does not have audit logging enabled.
+      InputParameters:
+        opensearchauditloggingenabledcloudWatchLogsLogGroupArnList: !If
+          - opensearchauditloggingenabledcloudWatchLogsLogGroupArnList
+          - !Ref 'opensearchauditloggingenabledcloudWatchLogsLogGroupArnList'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_AUDIT_LOGGING_ENABLED
+  OPENSEARCHDATANODEFAULTTOLERANCE:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-data-node-fault-tolerance
+      Description: >-
+        Checks if Amazon OpenSearch Service domains are configured with at least three data nodes and zoneAwarenessEnabled is true. The rule is NON_COMPLIANT for an OpenSearch domain if 'instanceCount'
+        is less than 3 or 'zoneAwarenessEnabled' is set to 'false'.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_DATA_NODE_FAULT_TOLERANCE
+  OPENSEARCHENCRYPTEDATREST:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-encrypted-at-rest
+      Description: Checks if Amazon OpenSearch Service domains have encryption at rest configuration enabled. The rule is NON_COMPLIANT if EncryptionAtRestOptions field is not enabled.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_ENCRYPTED_AT_REST
+  OPENSEARCHHTTPSREQUIRED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-https-required
+      Description: >-
+        Checks whether connections to OpenSearch domains are using HTTPS. The rule is NON_COMPLIANT if the Amazon OpenSearch domain 'EnforceHTTPS' is not 'true' or is 'true' and 'TLSSecurityPolicy' is not
+        in 'tlsPolicies'.
+      InputParameters:
+        opensearchhttpsrequiredtlsPolicies: !If
+          - opensearchhttpsrequiredtlsPolicies
+          - !Ref 'opensearchhttpsrequiredtlsPolicies'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_HTTPS_REQUIRED
+Parameters:
+  iamusermfaenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  iamuserunusedcredentialscheckMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  iamuserunusedcredentialscheckmaxCredentialUsageAge:
+    Type: String
+    Default: '90'
+    Description: Maximum number of days a credential cannot be used. The default value is 90 days.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  internetgatewayauthorizedvpconlyAuthorizedVpcIds:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of the authorized VPC IDs with attached IGWs. If parameter is not provided all attached IGWs will be NON_COMPLIANT.
+  kmscmknotscheduledfordeletionMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  kmscmknotscheduledfordeletionkmsKeyIds:
+    Type: String
+    Default: ''
+    Description: (Optional) Comma-separated list of specific customer managed key IDs not to be scheduled for deletion. If you do not specify any keys, the rule checks all the keys.
+  lambdaconcurrencycheckConcurrencyLimitLow:
+    Type: String
+    Default: ''
+    Description: Minimum concurrency execution limit
+  lambdaconcurrencycheckConcurrencyLimitHigh:
+    Type: String
+    Default: ''
+    Description: Maximum concurrency execution limit
+  lambdadlqcheckdlqArns:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of Amazon SQS and Amazon SNS ARNs that must be configured as the Lambda function dead-letter queue target.
+  lambdafunctionsettingscheckruntime:
+    Type: String
+    Description: Comma-separated list of AWS Lambda runtime values
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  lambdafunctionsettingscheckrole:
+    Type: String
+    Default: ''
+    Description: Name or ARN of the AWS Lambda execution role
+  lambdafunctionsettingschecktimeout:
+    Type: String
+    Default: '3'
+    Description: AWS Lambda function timeout in seconds
+  lambdafunctionsettingscheckmemorySize:
+    Type: String
+    Default: '128'
+    Description: AWS Lambda function size in megabytes
+  lambdainsidevpcsubnetIds:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of Subnet IDs that Lambda functions can be associated with.
+  lambdavpcmultiazcheckavailabilityZones:
+    Type: String
+    Default: ''
+    Description: Number of expected Availability zones.
+  mfaenabledforiamconsoleaccessMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions:
+    Type: String
+    Description: Comma-separated list of values. You can select a max of two. Valid values include 'aws:pass', 'aws:drop', and 'aws:forward_to_sfe'.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  netfwpolicydefaultactionfullpacketsstatelessDefaultActions:
+    Type: String
+    Description: Comma-separated list of values. You can select a max of two. Valid values include 'aws:pass', 'aws:drop', and 'aws:forward_to_sfe'.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  nounrestrictedroutetoigwrouteTableIds:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of route table IDs that can have routes to an Internet Gateway with a destination CIDR block of '0.0.0.0/0' or '::/0'.
+  opensearchauditloggingenabledcloudWatchLogsLogGroupArnList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of Amazon CloudWatch Logs log groups that should be configured for audit logs.
+  opensearchhttpsrequiredtlsPolicies:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of TLS security policies to check against the Amazon OpensSearch domain.
+Conditions:
+  iamuserunusedcredentialscheckmaxCredentialUsageAge: !Not
+    - !Equals
+      - ''
+      - !Ref 'iamuserunusedcredentialscheckmaxCredentialUsageAge'
+  internetgatewayauthorizedvpconlyAuthorizedVpcIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'internetgatewayauthorizedvpconlyAuthorizedVpcIds'
+  kmscmknotscheduledfordeletionkmsKeyIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'kmscmknotscheduledfordeletionkmsKeyIds'
+  lambdaconcurrencycheckConcurrencyLimitLow: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdaconcurrencycheckConcurrencyLimitLow'
+  lambdaconcurrencycheckConcurrencyLimitHigh: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdaconcurrencycheckConcurrencyLimitHigh'
+  lambdadlqcheckdlqArns: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdadlqcheckdlqArns'
+  lambdafunctionsettingscheckruntime: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdafunctionsettingscheckruntime'
+  lambdafunctionsettingscheckrole: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdafunctionsettingscheckrole'
+  lambdafunctionsettingschecktimeout: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdafunctionsettingschecktimeout'
+  lambdafunctionsettingscheckmemorySize: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdafunctionsettingscheckmemorySize'
+  lambdainsidevpcsubnetIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdainsidevpcsubnetIds'
+  lambdavpcmultiazcheckavailabilityZones: !Not
+    - !Equals
+      - ''
+      - !Ref 'lambdavpcmultiazcheckavailabilityZones'
+  netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions: !Not
+    - !Equals
+      - ''
+      - !Ref 'netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions'
+  netfwpolicydefaultactionfullpacketsstatelessDefaultActions: !Not
+    - !Equals
+      - ''
+      - !Ref 'netfwpolicydefaultactionfullpacketsstatelessDefaultActions'
+  nounrestrictedroutetoigwrouteTableIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'nounrestrictedroutetoigwrouteTableIds'
+  opensearchauditloggingenabledcloudWatchLogsLogGroupArnList: !Not
+    - !Equals
+      - ''
+      - !Ref 'opensearchauditloggingenabledcloudWatchLogsLogGroupArnList'
+  opensearchhttpsrequiredtlsPolicies: !Not
+    - !Equals
+      - ''
+      - !Ref 'opensearchhttpsrequiredtlsPolicies'

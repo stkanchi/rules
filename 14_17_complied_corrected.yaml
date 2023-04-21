@@ -1,0 +1,925 @@
+Resources:
+  DESIREDINSTANCETYPE:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: desired-instance-type
+      Description: Checks whether your EC2 instances are of the specified instance types.
+      InputParameters:
+        desiredinstancetypeinstanceType: !If
+          - desiredinstancetypeinstanceType
+          - !Ref 'desiredinstancetypeinstanceType'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: DESIRED_INSTANCE_TYPE
+  DMSREPLICATIONNOTPUBLIC:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: dms-replication-not-public
+      Description: Checks whether AWS Database Migration Service replication instances are public. The rule is NON_COMPLIANT if PubliclyAccessible field is True.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: DMS_REPLICATION_NOT_PUBLIC
+      MaximumExecutionFrequency: !Ref 'dmsreplicationnotpublicmaximumexecutionfrequency'
+  EC2IMDSV2CHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-imdsv2-check
+      Description: >-
+        Checks whether your Amazon Elastic Compute Cloud (Amazon EC2) instance metadata version is configured with Instance Metadata Service Version 2 (IMDSv2). The rule is NON_COMPLIANT if the HttpTokens
+        is set to optional.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_IMDSV2_CHECK
+  EC2INSTANCEDETAILEDMONITORINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-detailed-monitoring-enabled
+      Description: Checks whether detailed monitoring is enabled for EC2 instances.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_DETAILED_MONITORING_ENABLED
+  EC2INSTANCENOPUBLICIP:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-no-public-ip
+      Description: >-
+        Checks whether Amazon Elastic Compute Cloud (Amazon EC2) instances have a public IP association. The rule is NON_COMPLIANT if the publicIp field is present in the Amazon EC2 instance configuration
+        item. This rule applies only to IPv4.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_NO_PUBLIC_IP
+  EC2INSTANCEPROFILEATTACHED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-profile-attached
+      Description: >-
+        Checks if an Amazon Elastic Compute Cloud (Amazon EC2) instance has an Identity and Access Management (IAM) profile attached to it. This rule is NON_COMPLIANT if no IAM profile is attached to the
+        Amazon EC2 instance.
+      InputParameters:
+        ec2instanceprofileattachedIamInstanceProfileArnList: !If
+          - ec2instanceprofileattachedIamInstanceProfileArnList
+          - !Ref 'ec2instanceprofileattachedIamInstanceProfileArnList'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_PROFILE_ATTACHED
+  EC2LASTBACKUPRECOVERYPOINTCREATED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-last-backup-recovery-point-created
+      Description: >-
+        Checks if a recovery point was created for Amazon Elastic Compute Cloud (Amazon EC2) instances. The rule is NON_COMPLIANT if the Amazon EC2 instance does not have a corresponding recovery point
+        created within the specified time period.
+      InputParameters:
+        ec2lastbackuprecoverypointcreatedresourceTags: !If
+          - ec2lastbackuprecoverypointcreatedresourceTags
+          - !Ref 'ec2lastbackuprecoverypointcreatedresourceTags'
+          - !Ref 'AWS::NoValue'
+        ec2lastbackuprecoverypointcreatedresourceId: !If
+          - ec2lastbackuprecoverypointcreatedresourceId
+          - !Ref 'ec2lastbackuprecoverypointcreatedresourceId'
+          - !Ref 'AWS::NoValue'
+        ec2lastbackuprecoverypointcreatedrecoveryPointAgeValue: !If
+          - ec2lastbackuprecoverypointcreatedrecoveryPointAgeValue
+          - !Ref 'ec2lastbackuprecoverypointcreatedrecoveryPointAgeValue'
+          - !Ref 'AWS::NoValue'
+        ec2lastbackuprecoverypointcreatedrecoveryPointAgeUnit: !If
+          - ec2lastbackuprecoverypointcreatedrecoveryPointAgeUnit
+          - !Ref 'ec2lastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAST_BACKUP_RECOVERY_POINT_CREATED
+      MaximumExecutionFrequency: !Ref 'ec2lastbackuprecoverypointcreatedmaximumexecutionfrequency'
+  EC2LAUNCHTEMPLATEPUBLICIPDISABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-launch-template-public-ip-disabled
+      Description: >-
+        Checks if Amazon EC2 Launch Templates are set to assign public IP addresses to Network Interfaces. The rule is NON_COMPLIANT if the default version of an EC2 Launch Template has at least 1 Network
+        Interface with 'AssociatePublicIpAddress' set to 'true'.
+      InputParameters:
+        ec2launchtemplatepublicipdisabledexemptedLaunchTemplates: !If
+          - ec2launchtemplatepublicipdisabledexemptedLaunchTemplates
+          - !Ref 'ec2launchtemplatepublicipdisabledexemptedLaunchTemplates'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::LaunchTemplate
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAUNCH_TEMPLATE_PUBLIC_IP_DISABLED
+  EC2MANAGEDINSTANCEAPPLICATIONSBLACKLISTED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-applications-blacklisted
+      Description: >-
+        Checks that none of the specified applications are installed on the instance. Optionally, specify the version. Newer versions will not be blacklisted. Optionally, specify the platform to apply the
+        rule only to instances running that platform.
+      InputParameters:
+        ec2managedinstanceapplicationsblacklistedapplicationNames: !If
+          - ec2managedinstanceapplicationsblacklistedapplicationNames
+          - !Ref 'ec2managedinstanceapplicationsblacklistedapplicationNames'
+          - !Ref 'AWS::NoValue'
+        ec2managedinstanceapplicationsblacklistedplatformType: !If
+          - ec2managedinstanceapplicationsblacklistedplatformType
+          - !Ref 'ec2managedinstanceapplicationsblacklistedplatformType'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_APPLICATIONS_BLACKLISTED
+  EC2MANAGEDINSTANCEAPPLICATIONSREQUIRED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-applications-required
+      Description: >-
+        Checks whether all of the specified applications are installed on the instance. Optionally, specify the minimum acceptable version. Optionally, specify the platform to apply the rule only to instances
+        running that platform.
+      InputParameters:
+        ec2managedinstanceapplicationsrequiredapplicationNames: !If
+          - ec2managedinstanceapplicationsrequiredapplicationNames
+          - !Ref 'ec2managedinstanceapplicationsrequiredapplicationNames'
+          - !Ref 'AWS::NoValue'
+        ec2managedinstanceapplicationsrequiredplatformType: !If
+          - ec2managedinstanceapplicationsrequiredplatformType
+          - !Ref 'ec2managedinstanceapplicationsrequiredplatformType'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_APPLICATIONS_REQUIRED
+  EC2MANAGEDINSTANCEINVENTORYBLACKLISTED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-inventory-blacklisted
+      Description: Checks whether instances managed by Amazon EC2 Systems Manager are configured to collect blacklisted inventory types.
+      InputParameters:
+        ec2managedinstanceinventoryblacklistedinventoryNames: !If
+          - ec2managedinstanceinventoryblacklistedinventoryNames
+          - !Ref 'ec2managedinstanceinventoryblacklistedinventoryNames'
+          - !Ref 'AWS::NoValue'
+        ec2managedinstanceinventoryblacklistedplatformType: !If
+          - ec2managedinstanceinventoryblacklistedplatformType
+          - !Ref 'ec2managedinstanceinventoryblacklistedplatformType'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_INVENTORY_BLACKLISTED
+  EC2MANAGEDINSTANCEPATCHCOMPLIANCESTATUSCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-patch-compliance-status-check
+      Description: >-
+        Checks whether the compliance status of the AWS Systems Manager patch compliance is COMPLIANT or NON_COMPLIANT after the patch installation on the instance. The rule is compliant if the field status
+        is COMPLIANT.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::PatchCompliance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_PATCH_COMPLIANCE_STATUS_CHECK
+  EC2MANAGEDINSTANCEASSOCIATIONCOMPLIANCESTATUSCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-association-compliance-status-check
+      Description: >-
+        Checks whether the compliance status of the AWS Systems Manager association compliance is COMPLIANT or NON_COMPLIANT after the association execution on the instance. The rule is compliant if the
+        field status is COMPLIANT.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::AssociationCompliance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_ASSOCIATION_COMPLIANCE_STATUS_CHECK
+  EC2MANAGEDINSTANCEPLATFORMCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-platform-check
+      Description: Checks whether EC2 managed instances have the desired configurations.
+      InputParameters:
+        ec2managedinstanceplatformcheckplatformType: !If
+          - ec2managedinstanceplatformcheckplatformType
+          - !Ref 'ec2managedinstanceplatformcheckplatformType'
+          - !Ref 'AWS::NoValue'
+        ec2managedinstanceplatformcheckplatformVersion: !If
+          - ec2managedinstanceplatformcheckplatformVersion
+          - !Ref 'ec2managedinstanceplatformcheckplatformVersion'
+          - !Ref 'AWS::NoValue'
+        ec2managedinstanceplatformcheckagentVersion: !If
+          - ec2managedinstanceplatformcheckagentVersion
+          - !Ref 'ec2managedinstanceplatformcheckagentVersion'
+          - !Ref 'AWS::NoValue'
+        ec2managedinstanceplatformcheckplatformName: !If
+          - ec2managedinstanceplatformcheckplatformName
+          - !Ref 'ec2managedinstanceplatformcheckplatformName'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_PLATFORM_CHECK
+  EC2NOAMAZONKEYPAIR:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-no-amazon-key-pair
+      Description: Checks if running Amazon Elastic Compute Cloud (EC2) instances are launched using amazon key pairs. The rule is NON_COMPLIANT if a running EC2 instance is launched with a key pair.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_NO_AMAZON_KEY_PAIR
+  EC2RESOURCESPROTECTEDBYBACKUPPLAN:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-resources-protected-by-backup-plan
+      Description: Checks if Amazon Elastic Compute Cloud (Amazon EC2) instances are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon EC2 instance is not covered by a backup plan.
+      InputParameters:
+        ec2resourcesprotectedbybackupplanresourceTags: !If
+          - ec2resourcesprotectedbybackupplanresourceTags
+          - !Ref 'ec2resourcesprotectedbybackupplanresourceTags'
+          - !Ref 'AWS::NoValue'
+        ec2resourcesprotectedbybackupplanresourceId: !If
+          - ec2resourcesprotectedbybackupplanresourceId
+          - !Ref 'ec2resourcesprotectedbybackupplanresourceId'
+          - !Ref 'AWS::NoValue'
+        ec2resourcesprotectedbybackupplancrossRegionList: !If
+          - ec2resourcesprotectedbybackupplancrossRegionList
+          - !Ref 'ec2resourcesprotectedbybackupplancrossRegionList'
+          - !Ref 'AWS::NoValue'
+        ec2resourcesprotectedbybackupplancrossAccountList: !If
+          - ec2resourcesprotectedbybackupplancrossAccountList
+          - !Ref 'ec2resourcesprotectedbybackupplancrossAccountList'
+          - !Ref 'AWS::NoValue'
+        ec2resourcesprotectedbybackupplanmaxRetentionDays: !If
+          - ec2resourcesprotectedbybackupplanmaxRetentionDays
+          - !Ref 'ec2resourcesprotectedbybackupplanmaxRetentionDays'
+          - !Ref 'AWS::NoValue'
+        ec2resourcesprotectedbybackupplanminRetentionDays: !If
+          - ec2resourcesprotectedbybackupplanminRetentionDays
+          - !Ref 'ec2resourcesprotectedbybackupplanminRetentionDays'
+          - !Ref 'AWS::NoValue'
+        ec2resourcesprotectedbybackupplanbackupVaultLockCheck: !If
+          - ec2resourcesprotectedbybackupplanbackupVaultLockCheck
+          - !Ref 'ec2resourcesprotectedbybackupplanbackupVaultLockCheck'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+      MaximumExecutionFrequency: !Ref 'ec2resourcesprotectedbybackupplanmaximumexecutionfrequency'
+  EC2STOPPEDINSTANCE:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-stopped-instance
+      Description: Checks whether there are instances stopped for more than the allowed number of days.
+      InputParameters:
+        ec2stoppedinstanceAllowedDays: !If
+          - ec2stoppedinstanceAllowedDays
+          - !Ref 'ec2stoppedinstanceAllowedDays'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_STOPPED_INSTANCE
+      MaximumExecutionFrequency: !Ref 'ec2stoppedinstancemaximumexecutionfrequency'
+  EC2TRANSITGATEWAYAUTOVPCATTACHDISABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-transit-gateway-auto-vpc-attach-disabled
+      Description: >-
+        Checks if Amazon Elastic Compute Cloud (Amazon EC2) Transit Gateways have 'AutoAcceptSharedAttachments' enabled. The rule is NON_COMPLIANT for a Transit Gateway if 'AutoAcceptSharedAttachments'
+        is set to 'enable'.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TransitGateway
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRANSIT_GATEWAY_AUTO_VPC_ATTACH_DISABLED
+  EC2VOLUMEINUSECHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-volume-inuse-check
+      Description: Checks whether EBS volumes are attached to EC2 instances.
+      InputParameters:
+        ec2volumeinusecheckdeleteOnTermination: !If
+          - ec2volumeinusecheckdeleteOnTermination
+          - !Ref 'ec2volumeinusecheckdeleteOnTermination'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_VOLUME_INUSE_CHECK
+  EFSACCESSPOINTENFORCEROOTDIRECTORY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-access-point-enforce-root-directory
+      Description: >-
+        Checks if Amazon Elastic File System (Amazon EFS) access points are configured to enforce a root directory. The rule is NON_COMPLIANT if the value of 'Path' is set to '/' (default root directory
+        of the file system).
+      InputParameters:
+        efsaccesspointenforcerootdirectoryapprovedDirectories: !If
+          - efsaccesspointenforcerootdirectoryapprovedDirectories
+          - !Ref 'efsaccesspointenforcerootdirectoryapprovedDirectories'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EFS::AccessPoint
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_ACCESS_POINT_ENFORCE_ROOT_DIRECTORY
+  EFSACCESSPOINTENFORCEUSERIDENTITY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-access-point-enforce-user-identity
+      Description: >-
+        Checks if Amazon Elastic File System (Amazon EFS) access points are configured to enforce a user identity. The rule is NON_COMPLIANT if 'PosixUser' is not defined or if parameters are provided and
+        there is no match in the corresponding parameter.
+      InputParameters:
+        efsaccesspointenforceuseridentityapprovedUids: !If
+          - efsaccesspointenforceuseridentityapprovedUids
+          - !Ref 'efsaccesspointenforceuseridentityapprovedUids'
+          - !Ref 'AWS::NoValue'
+        efsaccesspointenforceuseridentityapprovedGids: !If
+          - efsaccesspointenforceuseridentityapprovedGids
+          - !Ref 'efsaccesspointenforceuseridentityapprovedGids'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EFS::AccessPoint
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_ACCESS_POINT_ENFORCE_USER_IDENTITY
+  EFSENCRYPTEDCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-encrypted-check
+      Description: >-
+        Checks whether Amazon EFS are configured to encrypt file data using AWS KMS. The rule is NON_COMPLIANT if the Encrypted key is set to False on DescribeFileSystems or, if specified, KmsKeyId key
+        on DescribeFileSystems is not matching KmsKeyId parameter.
+      InputParameters:
+        efsencryptedcheckKmsKeyId: !If
+          - efsencryptedcheckKmsKeyId
+          - !Ref 'efsencryptedcheckKmsKeyId'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_ENCRYPTED_CHECK
+      MaximumExecutionFrequency: !Ref 'efsencryptedcheckmaximumexecutionfrequency'
+  EFSINBACKUPPLAN:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-in-backup-plan
+      Description: Checks whether Amazon Elastic File System (Amazon EFS) file systems are added in the backup plans of AWS Backup. The rule is NON_COMPLIANT if EFS file systems are not included in the
+        backup plans.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_IN_BACKUP_PLAN
+      MaximumExecutionFrequency: !Ref 'efsinbackupplanmaximumexecutionfrequency'
+  EFSLASTBACKUPRECOVERYPOINTCREATED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-last-backup-recovery-point-created
+      Description: >-
+        Checks if a recovery point was created for Amazon Elastic File System (Amazon EFS) File Systems. The rule is NON_COMPLIANT if the Amazon EFS File System does not have a corresponding Recovery Point
+        created within the specified time period.
+      InputParameters:
+        efslastbackuprecoverypointcreatedresourceTags: !If
+          - efslastbackuprecoverypointcreatedresourceTags
+          - !Ref 'efslastbackuprecoverypointcreatedresourceTags'
+          - !Ref 'AWS::NoValue'
+        efslastbackuprecoverypointcreatedresourceId: !If
+          - efslastbackuprecoverypointcreatedresourceId
+          - !Ref 'efslastbackuprecoverypointcreatedresourceId'
+          - !Ref 'AWS::NoValue'
+        efslastbackuprecoverypointcreatedrecoveryPointAgeValue: !If
+          - efslastbackuprecoverypointcreatedrecoveryPointAgeValue
+          - !Ref 'efslastbackuprecoverypointcreatedrecoveryPointAgeValue'
+          - !Ref 'AWS::NoValue'
+        efslastbackuprecoverypointcreatedrecoveryPointAgeUnit: !If
+          - efslastbackuprecoverypointcreatedrecoveryPointAgeUnit
+          - !Ref 'efslastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EFS::FileSystem
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_LAST_BACKUP_RECOVERY_POINT_CREATED
+      MaximumExecutionFrequency: !Ref 'efslastbackuprecoverypointcreatedmaximumexecutionfrequency'
+  EFSRESOURCESPROTECTEDBYBACKUPPLAN:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-resources-protected-by-backup-plan
+      Description: Checks if Amazon Elastic File System (Amazon EFS) File Systems are protected by a backup plan. The rule is NON_COMPLIANT if the EFS File System is not covered by a backup plan.
+      InputParameters:
+        efsresourcesprotectedbybackupplanresourceTags: !If
+          - efsresourcesprotectedbybackupplanresourceTags
+          - !Ref 'efsresourcesprotectedbybackupplanresourceTags'
+          - !Ref 'AWS::NoValue'
+        efsresourcesprotectedbybackupplanresourceId: !If
+          - efsresourcesprotectedbybackupplanresourceId
+          - !Ref 'efsresourcesprotectedbybackupplanresourceId'
+          - !Ref 'AWS::NoValue'
+        efsresourcesprotectedbybackupplancrossRegionList: !If
+          - efsresourcesprotectedbybackupplancrossRegionList
+          - !Ref 'efsresourcesprotectedbybackupplancrossRegionList'
+          - !Ref 'AWS::NoValue'
+        efsresourcesprotectedbybackupplancrossAccountList: !If
+          - efsresourcesprotectedbybackupplancrossAccountList
+          - !Ref 'efsresourcesprotectedbybackupplancrossAccountList'
+          - !Ref 'AWS::NoValue'
+        efsresourcesprotectedbybackupplanmaxRetentionDays: !If
+          - efsresourcesprotectedbybackupplanmaxRetentionDays
+          - !Ref 'efsresourcesprotectedbybackupplanmaxRetentionDays'
+          - !Ref 'AWS::NoValue'
+        efsresourcesprotectedbybackupplanminRetentionDays: !If
+          - efsresourcesprotectedbybackupplanminRetentionDays
+          - !Ref 'efsresourcesprotectedbybackupplanminRetentionDays'
+          - !Ref 'AWS::NoValue'
+        efsresourcesprotectedbybackupplanbackupVaultLockCheck: !If
+          - efsresourcesprotectedbybackupplanbackupVaultLockCheck
+          - !Ref 'efsresourcesprotectedbybackupplanbackupVaultLockCheck'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EFS::FileSystem
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+      MaximumExecutionFrequency: !Ref 'efsresourcesprotectedbybackupplanmaximumexecutionfrequency'
+Parameters:
+  desiredinstancetypeinstanceType:
+    Type: String
+    Description: Comma separated list of EC2 instance types (for example, 't2.small, m4.large').
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  dmsreplicationnotpublicMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  ec2instanceprofileattachedIamInstanceProfileArnList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of IAM profile Amazon Resource Names (ARNs) that can be attached to Amazon EC2 instances.
+  ec2lastbackuprecoverypointcreatedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  ec2lastbackuprecoverypointcreatedresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags of Amazon EC2 instances for the rule to check, in JSON format.
+  ec2lastbackuprecoverypointcreatedresourceId:
+    Type: String
+    Default: ''
+    Description: ID of Amazon EC2 instance for the rule to check.
+  ec2lastbackuprecoverypointcreatedrecoveryPointAgeValue:
+    Type: String
+    Default: '1'
+    Description: Numerical value for maximum allowed age. No more than 744 for hours, 31 for days.
+  ec2lastbackuprecoverypointcreatedrecoveryPointAgeUnit:
+    Type: String
+    Default: days
+    Description: 'Unit of time for maximum allowed age. Accepted values: ''hours'', ''days''.'
+  ec2launchtemplatepublicipdisabledexemptedLaunchTemplates:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of exempted EC2 Launch Template IDs that are allowed to have Network Interfaces with the AssociatePublicIpAddress value set to 'true'.
+  ec2managedinstanceapplicationsblacklistedapplicationNames:
+    Type: String
+    Description: Comma-separated list of application names. Optionally, specify versions appended with ':' (for example, 'Chrome:0.5.3, Firefox').
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  ec2managedinstanceapplicationsblacklistedplatformType:
+    Type: String
+    Default: ''
+    Description: Platform type (for example, 'Linux').
+  ec2managedinstanceapplicationsrequiredapplicationNames:
+    Type: String
+    Description: Comma-separated list of application names. Optionally, specify versions appended with ':' (for example, 'Chrome:0.5.3, Firefox').
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  ec2managedinstanceapplicationsrequiredplatformType:
+    Type: String
+    Default: ''
+    Description: Platform type (for example, 'Linux').
+  ec2managedinstanceinventoryblacklistedinventoryNames:
+    Type: String
+    Description: Comma separated list of Systems Manager inventory types (for example, 'AWS:Network, AWS:WindowsUpdate').
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  ec2managedinstanceinventoryblacklistedplatformType:
+    Type: String
+    Default: ''
+    Description: Platform type (for example, 'Linux').
+  ec2managedinstanceplatformcheckplatformType:
+    Type: String
+    Description: Platform type (for example, 'Linux').
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  ec2managedinstanceplatformcheckplatformVersion:
+    Type: String
+    Default: ''
+    Description: Platform version (for example, '2016.09').
+  ec2managedinstanceplatformcheckagentVersion:
+    Type: String
+    Default: ''
+    Description: Agent version (for example, '2.0.433.0').
+  ec2managedinstanceplatformcheckplatformName:
+    Type: String
+    Default: ''
+    Description: The version of the platform (for example, '2016.09')
+  ec2resourcesprotectedbybackupplanMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  ec2resourcesprotectedbybackupplanresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags for Amazon EC2 instances for the rule to check, in JSON format.
+  ec2resourcesprotectedbybackupplanresourceId:
+    Type: String
+    Default: ''
+    Description: ID of Amazon EC2 instance for the rule to check.
+  ec2resourcesprotectedbybackupplancrossRegionList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination regions for the cross-region backup copy to be kept
+  ec2resourcesprotectedbybackupplancrossAccountList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination accounts for cross-account backup copy to be kept
+  ec2resourcesprotectedbybackupplanmaxRetentionDays:
+    Type: String
+    Default: ''
+    Description: The maximum retention period in days for the Backup Vault Lock
+  ec2resourcesprotectedbybackupplanminRetentionDays:
+    Type: String
+    Default: ''
+    Description: The minimum retention period in days for the Backup Vault Lock
+  ec2resourcesprotectedbybackupplanbackupVaultLockCheck:
+    Type: String
+    Default: ''
+    Description: 'Accepted values: ''True'' or ''False''. Enter ''True'' for the rule to check if the resource is backed up in a locked vault'
+  ec2stoppedinstanceMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  ec2stoppedinstanceAllowedDays:
+    Type: String
+    Default: '30'
+    Description: Number of days the instance can be stopped for before it becomes non-compliant. The default number of days is 30.
+  ec2volumeinusecheckdeleteOnTermination:
+    Type: String
+    Default: ''
+    Description: EBS volumes are marked for deletion when an instance is terminated.
+  efsaccesspointenforcerootdirectoryapprovedDirectories:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of subdirectory paths that are approved for Amazon EFS access point root directory enforcement.
+  efsaccesspointenforceuseridentityapprovedUids:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of POSIX user ID that are approved for EFS access point user enforcement.
+  efsaccesspointenforceuseridentityapprovedGids:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of POSIX group IDs that are approved for EFS access point user enforcement.
+  efsencryptedcheckMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  efsencryptedcheckKmsKeyId:
+    Type: String
+    Default: ''
+    Description: Amazon Resource Name (ARN) of the KMS key that is used to encrypt the EFS file system.
+  efsinbackupplanMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  efslastbackuprecoverypointcreatedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  efslastbackuprecoverypointcreatedresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags of Amazon EFS File Systems for the rule to check, in JSON format.
+  efslastbackuprecoverypointcreatedresourceId:
+    Type: String
+    Default: ''
+    Description: ID of EFS File System for the rule to check.
+  efslastbackuprecoverypointcreatedrecoveryPointAgeValue:
+    Type: String
+    Default: '1'
+    Description: Numerical value for maximum allowed age. No more than 744 for hours, 31 for days.
+  efslastbackuprecoverypointcreatedrecoveryPointAgeUnit:
+    Type: String
+    Default: days
+    Description: 'Unit of time for maximum allowed age. Accepted values: ''hours'', ''days''.'
+  efsresourcesprotectedbybackupplanMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  efsresourcesprotectedbybackupplanresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags for EFS File Systems for the rule to check, in JSON format.
+  efsresourcesprotectedbybackupplanresourceId:
+    Type: String
+    Default: ''
+    Description: ID of the EFS File System for the rule to check.
+  efsresourcesprotectedbybackupplancrossRegionList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination regions for the cross-region backup copy to be kept
+  efsresourcesprotectedbybackupplancrossAccountList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination accounts for cross-account backup copy to be kept
+  efsresourcesprotectedbybackupplanmaxRetentionDays:
+    Type: String
+    Default: ''
+    Description: The maximum retention period in days for the Backup Vault Lock
+  efsresourcesprotectedbybackupplanminRetentionDays:
+    Type: String
+    Default: ''
+    Description: The minimum retention period in days for the Backup Vault Lock
+  efsresourcesprotectedbybackupplanbackupVaultLockCheck:
+    Type: String
+    Default: ''
+    Description: 'Accepted values: ''True'' or ''False''. Enter ''True'' for the rule to check if the resource is backed up in a locked vault'
+Conditions:
+  desiredinstancetypeinstanceType: !Not
+    - !Equals
+      - ''
+      - !Ref 'desiredinstancetypeinstanceType'
+  ec2instanceprofileattachedIamInstanceProfileArnList: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2instanceprofileattachedIamInstanceProfileArnList'
+  ec2lastbackuprecoverypointcreatedresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2lastbackuprecoverypointcreatedresourceTags'
+  ec2lastbackuprecoverypointcreatedresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2lastbackuprecoverypointcreatedresourceId'
+  ec2lastbackuprecoverypointcreatedrecoveryPointAgeValue: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2lastbackuprecoverypointcreatedrecoveryPointAgeValue'
+  ec2lastbackuprecoverypointcreatedrecoveryPointAgeUnit: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2lastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+  ec2launchtemplatepublicipdisabledexemptedLaunchTemplates: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2launchtemplatepublicipdisabledexemptedLaunchTemplates'
+  ec2managedinstanceapplicationsblacklistedapplicationNames: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceapplicationsblacklistedapplicationNames'
+  ec2managedinstanceapplicationsblacklistedplatformType: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceapplicationsblacklistedplatformType'
+  ec2managedinstanceapplicationsrequiredapplicationNames: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceapplicationsrequiredapplicationNames'
+  ec2managedinstanceapplicationsrequiredplatformType: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceapplicationsrequiredplatformType'
+  ec2managedinstanceinventoryblacklistedinventoryNames: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceinventoryblacklistedinventoryNames'
+  ec2managedinstanceinventoryblacklistedplatformType: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceinventoryblacklistedplatformType'
+  ec2managedinstanceplatformcheckplatformType: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceplatformcheckplatformType'
+  ec2managedinstanceplatformcheckplatformVersion: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceplatformcheckplatformVersion'
+  ec2managedinstanceplatformcheckagentVersion: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceplatformcheckagentVersion'
+  ec2managedinstanceplatformcheckplatformName: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2managedinstanceplatformcheckplatformName'
+  ec2resourcesprotectedbybackupplanresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2resourcesprotectedbybackupplanresourceTags'
+  ec2resourcesprotectedbybackupplanresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2resourcesprotectedbybackupplanresourceId'
+  ec2resourcesprotectedbybackupplancrossRegionList: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2resourcesprotectedbybackupplancrossRegionList'
+  ec2resourcesprotectedbybackupplancrossAccountList: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2resourcesprotectedbybackupplancrossAccountList'
+  ec2resourcesprotectedbybackupplanmaxRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2resourcesprotectedbybackupplanmaxRetentionDays'
+  ec2resourcesprotectedbybackupplanminRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2resourcesprotectedbybackupplanminRetentionDays'
+  ec2resourcesprotectedbybackupplanbackupVaultLockCheck: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2resourcesprotectedbybackupplanbackupVaultLockCheck'
+  ec2stoppedinstanceAllowedDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2stoppedinstanceAllowedDays'
+  ec2volumeinusecheckdeleteOnTermination: !Not
+    - !Equals
+      - ''
+      - !Ref 'ec2volumeinusecheckdeleteOnTermination'
+  efsaccesspointenforcerootdirectoryapprovedDirectories: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsaccesspointenforcerootdirectoryapprovedDirectories'
+  efsaccesspointenforceuseridentityapprovedUids: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsaccesspointenforceuseridentityapprovedUids'
+  efsaccesspointenforceuseridentityapprovedGids: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsaccesspointenforceuseridentityapprovedGids'
+  efsencryptedcheckKmsKeyId: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsencryptedcheckKmsKeyId'
+  efslastbackuprecoverypointcreatedresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 'efslastbackuprecoverypointcreatedresourceTags'
+  efslastbackuprecoverypointcreatedresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 'efslastbackuprecoverypointcreatedresourceId'
+  efslastbackuprecoverypointcreatedrecoveryPointAgeValue: !Not
+    - !Equals
+      - ''
+      - !Ref 'efslastbackuprecoverypointcreatedrecoveryPointAgeValue'
+  efslastbackuprecoverypointcreatedrecoveryPointAgeUnit: !Not
+    - !Equals
+      - ''
+      - !Ref 'efslastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+  efsresourcesprotectedbybackupplanresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsresourcesprotectedbybackupplanresourceTags'
+  efsresourcesprotectedbybackupplanresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsresourcesprotectedbybackupplanresourceId'
+  efsresourcesprotectedbybackupplancrossRegionList: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsresourcesprotectedbybackupplancrossRegionList'
+  efsresourcesprotectedbybackupplancrossAccountList: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsresourcesprotectedbybackupplancrossAccountList'
+  efsresourcesprotectedbybackupplanmaxRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsresourcesprotectedbybackupplanmaxRetentionDays'
+  efsresourcesprotectedbybackupplanminRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsresourcesprotectedbybackupplanminRetentionDays'
+  efsresourcesprotectedbybackupplanbackupVaultLockCheck: !Not
+    - !Equals
+      - ''
+      - !Ref 'efsresourcesprotectedbybackupplanbackupVaultLockCheck'
