@@ -1,0 +1,40 @@
+Resources:
+  IAMUSERUNUSEDCREDENTIALSCHECKTEST:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: iam-user-unused-credentials-check-test
+      Description: Checks whether your AWS Identity and Access Management (IAM) users have passwords or active access keys that have not been used within the specified number of days you provided.
+      InputParameters:
+        iamuserunusedcredentialscheckmaxCredentialUsageAge: !If
+          - iamuserunusedcredentialscheckmaxCredentialUsageAge
+          - !Ref 'iamuserunusedcredentialscheckmaxCredentialUsageAge'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_USER_UNUSED_CREDENTIALS_CHECK
+      MaximumExecutionFrequency: !Ref 'iamuserunusedcredentialscheckmaximumexecutionfrequency'
+Parameters:
+  iamuserunusedcredentialscheckMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  iamuserunusedcredentialscheckmaxCredentialUsageAge:
+    Type: String
+    Default: '90'
+    Description: Maximum number of days a credential cannot be used. The default value is 90 days.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+Conditions:
+  iamuserunusedcredentialscheckmaxCredentialUsageAge: !Not
+    - !Equals
+      - ''
+      - !Ref 'iamuserunusedcredentialscheckmaxCredentialUsageAge'
