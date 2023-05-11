@@ -1,0 +1,2292 @@
+Resources:
+  NETFWPOLICYDEFAULTACTIONFRAGMENTPACKETS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: netfw-policy-default-action-fragment-packets
+      Description: >-
+        Checks if an AWS Network Firewall policy is configured with a user defined stateless default action for fragmented packets. The rule is NON_COMPLIANT if stateless default action for fragmented packets
+        does not match with user defined default action.
+      InputParameters:
+        netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions: !If
+          - netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions
+          - !Ref 'netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::NetworkFirewall::FirewallPolicy
+      Source:
+        Owner: AWS
+        SourceIdentifier: NETFW_POLICY_DEFAULT_ACTION_FRAGMENT_PACKETS
+  NETFWPOLICYDEFAULTACTIONFULLPACKETS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: netfw-policy-default-action-full-packets
+      Description: >-
+        Checks if an AWS Network Firewall policy is configured with a user defined default stateless action for full packets. This rule is NON_COMPLIANT if default stateless action for full packets does
+        not match with user defined default stateless action.
+      InputParameters:
+        netfwpolicydefaultactionfullpacketsstatelessDefaultActions: !If
+          - netfwpolicydefaultactionfullpacketsstatelessDefaultActions
+          - !Ref 'netfwpolicydefaultactionfullpacketsstatelessDefaultActions'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::NetworkFirewall::FirewallPolicy
+      Source:
+        Owner: AWS
+        SourceIdentifier: NETFW_POLICY_DEFAULT_ACTION_FULL_PACKETS
+  NETFWPOLICYRULEGROUPASSOCIATED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: netfw-policy-rule-group-associated
+      Description: >-
+        Check AWS Network Firewall policy is associated with stateful OR stateless rule groups. This rule is NON_COMPLIANT if no stateful or stateless rule groups are associated with the Network Firewall
+        policy else COMPLIANT if any one of the rule group exists.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::NetworkFirewall::FirewallPolicy
+      Source:
+        Owner: AWS
+        SourceIdentifier: NETFW_POLICY_RULE_GROUP_ASSOCIATED
+  NETFWSTATELESSRULEGROUPNOTEMPTY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: netfw-stateless-rule-group-not-empty
+      Description: Checks if a Stateless Network Firewall Rule Group contains rules. The rule is NON_COMPLIANT if there are no rules in a Stateless Network Firewall Rule Group.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::NetworkFirewall::RuleGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: NETFW_STATELESS_RULE_GROUP_NOT_EMPTY
+  NLBCROSSZONELOADBALANCINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: nlb-cross-zone-load-balancing-enabled
+      Description: Checks if cross-zone load balancing is enabled on Network Load Balancers (NLBs). The rule is NON_COMPLIANT if cross-zone load balancing is not enabled for an NLB.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ElasticLoadBalancingV2::LoadBalancer
+      Source:
+        Owner: AWS
+        SourceIdentifier: NLB_CROSS_ZONE_LOAD_BALANCING_ENABLED
+  NOUNRESTRICTEDROUTETOIGW:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: no-unrestricted-route-to-igw
+      Description: >-
+        Checks if there are public routes in the route table to an Internet Gateway (IGW). The rule is NON_COMPLIANT if a route to an IGW has a destination CIDR block of '0.0.0.0/0' or '::/0' or if a destination
+        CIDR block does not match the rule parameter.
+      InputParameters:
+        nounrestrictedroutetoigwrouteTableIds: !If
+          - nounrestrictedroutetoigwrouteTableIds
+          - !Ref 'nounrestrictedroutetoigwrouteTableIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::RouteTable
+      Source:
+        Owner: AWS
+        SourceIdentifier: NO_UNRESTRICTED_ROUTE_TO_IGW
+  OPENSEARCHACCESSCONTROLENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-access-control-enabled
+      Description: Checks if Amazon OpenSearch Service domains have fine-grained access control enabled. The rule is NON_COMPLIANT if AdvancedSecurityOptions is not enabled for the OpenSearch Service domain.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_ACCESS_CONTROL_ENABLED
+  OPENSEARCHAUDITLOGGINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-audit-logging-enabled
+      Description: Checks if Amazon OpenSearch Service domains have audit logging enabled. The rule is NON_COMPLIANT if an OpenSearch Service domain does not have audit logging enabled.
+      InputParameters:
+        opensearchauditloggingenabledcloudWatchLogsLogGroupArnList: !If
+          - opensearchauditloggingenabledcloudWatchLogsLogGroupArnList
+          - !Ref 'opensearchauditloggingenabledcloudWatchLogsLogGroupArnList'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_AUDIT_LOGGING_ENABLED
+  OPENSEARCHDATANODEFAULTTOLERANCE:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-data-node-fault-tolerance
+      Description: >-
+        Checks if Amazon OpenSearch Service domains are configured with at least three data nodes and zoneAwarenessEnabled is true. The rule is NON_COMPLIANT for an OpenSearch domain if 'instanceCount'
+        is less than 3 or 'zoneAwarenessEnabled' is set to 'false'.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_DATA_NODE_FAULT_TOLERANCE
+  OPENSEARCHENCRYPTEDATREST:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-encrypted-at-rest
+      Description: Checks if Amazon OpenSearch Service domains have encryption at rest configuration enabled. The rule is NON_COMPLIANT if EncryptionAtRestOptions field is not enabled.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_ENCRYPTED_AT_REST
+  OPENSEARCHHTTPSREQUIRED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-https-required
+      Description: >-
+        Checks whether connections to OpenSearch domains are using HTTPS. The rule is NON_COMPLIANT if the Amazon OpenSearch domain 'EnforceHTTPS' is not 'true' or is 'true' and 'TLSSecurityPolicy' is not
+        in 'tlsPolicies'.
+      InputParameters:
+        opensearchhttpsrequiredtlsPolicies: !If
+          - opensearchhttpsrequiredtlsPolicies
+          - !Ref 'opensearchhttpsrequiredtlsPolicies'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_HTTPS_REQUIRED
+  OPENSEARCHINVPCONLY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-in-vpc-only
+      Description: Checks if Amazon OpenSearch Service domains are in an Amazon Virtual Private Cloud (VPC). The rule is NON_COMPLIANT if an OpenSearch Service domain endpoint is public.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_IN_VPC_ONLY
+  OPENSEARCHLOGSTOCLOUDWATCH:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-logs-to-cloudwatch
+      Description: Checks if Amazon OpenSearch Service domains are configured to send logs to Amazon CloudWatch Logs. The rule is NON_COMPLIANT if logging is not configured.
+      InputParameters:
+        opensearchlogstocloudwatchlogTypes: !If
+          - opensearchlogstocloudwatchlogTypes
+          - !Ref 'opensearchlogstocloudwatchlogTypes'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_LOGS_TO_CLOUDWATCH
+  OPENSEARCHNODETONODEENCRYPTIONCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: opensearch-node-to-node-encryption-check
+      Description: Check that Amazon OpenSearch Service nodes are encrypted end to end. The rule is NON_COMPLIANT if the node-to-node encryption is not enabled on the domain
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::OpenSearch::Domain
+      Source:
+        Owner: AWS
+        SourceIdentifier: OPENSEARCH_NODE_TO_NODE_ENCRYPTION_CHECK
+  RDSAUTOMATICMINORVERSIONUPGRADEENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-automatic-minor-version-upgrade-enabled
+      Description: >-
+        Checks if Amazon Relational Database Service (RDS) database instances are configured for automatic minor version upgrades. The rule is NON_COMPLIANT if the value of 'autoMinorVersionUpgrade' is
+        false.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_AUTOMATIC_MINOR_VERSION_UPGRADE_ENABLED
+  RDSCLUSTERDEFAULTADMINCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-cluster-default-admin-check
+      Description: >-
+        Checks if an Amazon Relational Database Service (Amazon RDS) database cluster has changed the admin username from its default value. The rule is NON_COMPLIANT if the admin username is set to the
+        default value.
+      InputParameters:
+        rdsclusterdefaultadmincheckvalidAdminUserNames: !If
+          - rdsclusterdefaultadmincheckvalidAdminUserNames
+          - !Ref 'rdsclusterdefaultadmincheckvalidAdminUserNames'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBCluster
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_CLUSTER_DEFAULT_ADMIN_CHECK
+  RDSCLUSTERDELETIONPROTECTIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-cluster-deletion-protection-enabled
+      Description: Checks if an Amazon Relational Database Service (Amazon RDS) cluster has deletion protection enabled. This rule is NON_COMPLIANT if an RDS cluster does not have deletion protection enabled.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBCluster
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_CLUSTER_DELETION_PROTECTION_ENABLED
+  RDSCLUSTERIAMAUTHENTICATIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-cluster-iam-authentication-enabled
+      Description: Checks if an Amazon RDS Cluster has AWS Identity and Access Management (IAM) authentication enabled. The rule is NON_COMPLIANT if an RDS Cluster does not have IAM authentication enabled.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBCluster
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_CLUSTER_IAM_AUTHENTICATION_ENABLED
+  RDSCLUSTERMULTIAZENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-cluster-multi-az-enabled
+      Description: >-
+        Checks if Multi-AZ replication is enabled on Amazon Aurora and Hermes clusters managed by Amazon Relational Database Service (Amazon RDS). This rule is NON_COMPLIANT if an Amazon RDS instance is
+        not configured with Multi-AZ.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBCluster
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_CLUSTER_MULTI_AZ_ENABLED
+  RDSDBSECURITYGROUPNOTALLOWED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-db-security-group-not-allowed
+      Description: >-
+        Checks if there are any Amazon Relational Database Service (RDS) DB security groups that are not the default DB security group. The rule is NON_COMPLIANT is there are any DB security groups that
+        are not the default DB security group.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBSecurityGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_DB_SECURITY_GROUP_NOT_ALLOWED
+  RDSENHANCEDMONITORINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-enhanced-monitoring-enabled
+      Description: Checks whether enhanced monitoring is enabled for Amazon Relational Database Service (Amazon RDS) instances.
+      InputParameters:
+        rdsenhancedmonitoringenabledmonitoringInterval: !If
+          - rdsenhancedmonitoringenabledmonitoringInterval
+          - !Ref 'rdsenhancedmonitoringenabledmonitoringInterval'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_ENHANCED_MONITORING_ENABLED
+  RDSINBACKUPPLAN:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-in-backup-plan
+      Description: Checks whether Amazon RDS database is present in back plans of AWS Backup. The rule is NON_COMPLIANT if Amazon RDS databases are not included in any AWS Backup plan.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_IN_BACKUP_PLAN
+  RDSINSTANCEDEFAULTADMINCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-instance-default-admin-check
+      Description: >-
+        Checks if an Amazon Relational Database Service (Amazon RDS) database has changed the admin username from its default value. This rule will only run on RDS database instances. The rule is NON_COMPLIANT
+        if the admin username is set to the default value.
+      InputParameters:
+        rdsinstancedefaultadmincheckvalidAdminUserNames: !If
+          - rdsinstancedefaultadmincheckvalidAdminUserNames
+          - !Ref 'rdsinstancedefaultadmincheckvalidAdminUserNames'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_INSTANCE_DEFAULT_ADMIN_CHECK
+  RDSINSTANCEDELETIONPROTECTIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-instance-deletion-protection-enabled
+      Description: >-
+        Checks if an Amazon Relational Database Service (Amazon RDS) instance has deletion protection enabled. This rule is NON_COMPLIANT if an Amazon RDS instance does not have deletion protection enabled
+        i.e deletionProtection is set to false.
+      InputParameters:
+        rdsinstancedeletionprotectionenableddatabaseEngines: !If
+          - rdsinstancedeletionprotectionenableddatabaseEngines
+          - !Ref 'rdsinstancedeletionprotectionenableddatabaseEngines'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_INSTANCE_DELETION_PROTECTION_ENABLED
+  RDSINSTANCEIAMAUTHENTICATIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-instance-iam-authentication-enabled
+      Description: >-
+        Checks if an Amazon Relational Database Service (Amazon RDS) instance has AWS Identity and Access Management (IAM) authentication enabled. This rule is NON_COMPLIANT if an Amazon RDS instance does
+        not have AWS IAM authentication enabled.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_INSTANCE_IAM_AUTHENTICATION_ENABLED
+  RDSINSTANCEPUBLICACCESSCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-instance-public-access-check
+      Description: >-
+        Checks whether the Amazon Relational Database Service (RDS) instances are not publicly accessible. The rule is non-compliant if the publiclyAccessible field is true in the instance configuration
+        item.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_INSTANCE_PUBLIC_ACCESS_CHECK
+  RDSLASTBACKUPRECOVERYPOINTCREATED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-last-backup-recovery-point-created
+      Description: >-
+        Checks if a recovery point was created for Amazon Relational Database Service (Amazon RDS). The rule is NON_COMPLIANT if the Amazon RDS instance does not have a corresponding recovery point created
+        within the specified time period.
+      InputParameters:
+        rdslastbackuprecoverypointcreatedresourceTags: !If
+          - rdslastbackuprecoverypointcreatedresourceTags
+          - !Ref 'rdslastbackuprecoverypointcreatedresourceTags'
+          - !Ref 'AWS::NoValue'
+        rdslastbackuprecoverypointcreatedresourceId: !If
+          - rdslastbackuprecoverypointcreatedresourceId
+          - !Ref 'rdslastbackuprecoverypointcreatedresourceId'
+          - !Ref 'AWS::NoValue'
+        rdslastbackuprecoverypointcreatedrecoveryPointAgeValue: !If
+          - rdslastbackuprecoverypointcreatedrecoveryPointAgeValue
+          - !Ref 'rdslastbackuprecoverypointcreatedrecoveryPointAgeValue'
+          - !Ref 'AWS::NoValue'
+        rdslastbackuprecoverypointcreatedrecoveryPointAgeUnit: !If
+          - rdslastbackuprecoverypointcreatedrecoveryPointAgeUnit
+          - !Ref 'rdslastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_LAST_BACKUP_RECOVERY_POINT_CREATED
+  RDSLOGGINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-logging-enabled
+      Description: Checks that respective logs of Amazon Relational Database Service (Amazon RDS) are enabled. The rule is NON_COMPLIANT if any log types are not enabled.
+      InputParameters:
+        rdsloggingenabledadditionalLogs: !If
+          - rdsloggingenabledadditionalLogs
+          - !Ref 'rdsloggingenabledadditionalLogs'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_LOGGING_ENABLED
+  RDSMULTIAZSUPPORT:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-multi-az-support
+      Description: Checks whether high availability is enabled for your RDS DB instances.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_MULTI_AZ_SUPPORT
+  RDSRESOURCESPROTECTEDBYBACKUPPLAN:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-resources-protected-by-backup-plan
+      Description: Checks if Amazon Relational Database Service (Amazon RDS) instances are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon RDS Database instance is not covered by a backup
+        plan.
+      InputParameters:
+        rdsresourcesprotectedbybackupplanresourceTags: !If
+          - rdsresourcesprotectedbybackupplanresourceTags
+          - !Ref 'rdsresourcesprotectedbybackupplanresourceTags'
+          - !Ref 'AWS::NoValue'
+        rdsresourcesprotectedbybackupplanresourceId: !If
+          - rdsresourcesprotectedbybackupplanresourceId
+          - !Ref 'rdsresourcesprotectedbybackupplanresourceId'
+          - !Ref 'AWS::NoValue'
+        rdsresourcesprotectedbybackupplancrossRegionList: !If
+          - rdsresourcesprotectedbybackupplancrossRegionList
+          - !Ref 'rdsresourcesprotectedbybackupplancrossRegionList'
+          - !Ref 'AWS::NoValue'
+        rdsresourcesprotectedbybackupplancrossAccountList: !If
+          - rdsresourcesprotectedbybackupplancrossAccountList
+          - !Ref 'rdsresourcesprotectedbybackupplancrossAccountList'
+          - !Ref 'AWS::NoValue'
+        rdsresourcesprotectedbybackupplanmaxRetentionDays: !If
+          - rdsresourcesprotectedbybackupplanmaxRetentionDays
+          - !Ref 'rdsresourcesprotectedbybackupplanmaxRetentionDays'
+          - !Ref 'AWS::NoValue'
+        rdsresourcesprotectedbybackupplanminRetentionDays: !If
+          - rdsresourcesprotectedbybackupplanminRetentionDays
+          - !Ref 'rdsresourcesprotectedbybackupplanminRetentionDays'
+          - !Ref 'AWS::NoValue'
+        rdsresourcesprotectedbybackupplanbackupVaultLockCheck: !If
+          - rdsresourcesprotectedbybackupplanbackupVaultLockCheck
+          - !Ref 'rdsresourcesprotectedbybackupplanbackupVaultLockCheck'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+  RDSSNAPSHOTENCRYPTED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-snapshot-encrypted
+      Description: Checks whether Amazon Relational Database Service (Amazon RDS) DB snapshots are encrypted. The rule is NON_COMPLIANT, if the Amazon RDS DB snapshots are not encrypted.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBSnapshot
+          - AWS::RDS::DBClusterSnapshot
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_SNAPSHOT_ENCRYPTED
+  RDSSNAPSHOTSPUBLICPROHIBITED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-snapshots-public-prohibited
+      Description: Checks if Amazon Relational Database Service (Amazon RDS) snapshots are public. The rule is non-compliant if any existing and new Amazon RDS snapshots are public.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBSnapshot
+          - AWS::RDS::DBClusterSnapshot
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_SNAPSHOTS_PUBLIC_PROHIBITED
+  RDSSTORAGEENCRYPTED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: rds-storage-encrypted
+      Description: Checks whether storage encryption is enabled for your RDS DB instances.
+      InputParameters:
+        rdsstorageencryptedkmsKeyId: !If
+          - rdsstorageencryptedkmsKeyId
+          - !Ref 'rdsstorageencryptedkmsKeyId'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::RDS::DBInstance
+      Source:
+        Owner: AWS
+        SourceIdentifier: RDS_STORAGE_ENCRYPTED
+  REQUIREDTAGS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: required-tags
+      Description: Checks whether your resources have the tags that you specify.
+      InputParameters:
+        requiredtagstag1Key: !If
+          - requiredtagstag1Key
+          - !Ref 'requiredtagstag1Key'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag1Value: !If
+          - requiredtagstag1Value
+          - !Ref 'requiredtagstag1Value'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag2Key: !If
+          - requiredtagstag2Key
+          - !Ref 'requiredtagstag2Key'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag2Value: !If
+          - requiredtagstag2Value
+          - !Ref 'requiredtagstag2Value'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag3Key: !If
+          - requiredtagstag3Key
+          - !Ref 'requiredtagstag3Key'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag3Value: !If
+          - requiredtagstag3Value
+          - !Ref 'requiredtagstag3Value'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag4Key: !If
+          - requiredtagstag4Key
+          - !Ref 'requiredtagstag4Key'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag4Value: !If
+          - requiredtagstag4Value
+          - !Ref 'requiredtagstag4Value'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag5Key: !If
+          - requiredtagstag5Key
+          - !Ref 'requiredtagstag5Key'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag5Value: !If
+          - requiredtagstag5Value
+          - !Ref 'requiredtagstag5Value'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag6Key: !If
+          - requiredtagstag6Key
+          - !Ref 'requiredtagstag6Key'
+          - !Ref 'AWS::NoValue'
+        requiredtagstag6Value: !If
+          - requiredtagstag6Value
+          - !Ref 'requiredtagstag6Value'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ACM::Certificate
+          - AWS::AutoScaling::AutoScalingGroup
+          - AWS::CloudFormation::Stack
+          - AWS::CodeBuild::Project
+          - AWS::DynamoDB::Table
+          - AWS::EC2::CustomerGateway
+          - AWS::EC2::Instance
+          - AWS::EC2::InternetGateway
+          - AWS::EC2::NetworkAcl
+          - AWS::EC2::NetworkInterface
+          - AWS::EC2::RouteTable
+          - AWS::EC2::SecurityGroup
+          - AWS::EC2::Subnet
+          - AWS::EC2::Volume
+          - AWS::EC2::VPC
+          - AWS::EC2::VPNConnection
+          - AWS::EC2::VPNGateway
+          - AWS::ElasticLoadBalancing::LoadBalancer
+          - AWS::ElasticLoadBalancingV2::LoadBalancer
+          - AWS::RDS::DBInstance
+          - AWS::RDS::DBSecurityGroup
+          - AWS::RDS::DBSnapshot
+          - AWS::RDS::DBSubnetGroup
+          - AWS::RDS::EventSubscription
+          - AWS::Redshift::Cluster
+          - AWS::Redshift::ClusterParameterGroup
+          - AWS::Redshift::ClusterSecurityGroup
+          - AWS::Redshift::ClusterSnapshot
+          - AWS::Redshift::ClusterSubnetGroup
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: REQUIRED_TAGS
+  ROOTACCOUNTMFAENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: root-account-mfa-enabled
+      Description: Checks whether the root user of your AWS account requires multi-factor authentication for console sign-in.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_ACCOUNT_MFA_ENABLED
+  S3ACCOUNTLEVELPUBLICACCESSBLOCKS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-account-level-public-access-blocks
+      Description: Checks whether the required public access block settings are configured from account level. The rule is NON_COMPLIANT when the public access block settings are not configured from account
+        level.
+      InputParameters:
+        s3accountlevelpublicaccessblocksIgnorePublicAcls: !If
+          - s3accountlevelpublicaccessblocksIgnorePublicAcls
+          - !Ref 's3accountlevelpublicaccessblocksIgnorePublicAcls'
+          - !Ref 'AWS::NoValue'
+        s3accountlevelpublicaccessblocksBlockPublicPolicy: !If
+          - s3accountlevelpublicaccessblocksBlockPublicPolicy
+          - !Ref 's3accountlevelpublicaccessblocksBlockPublicPolicy'
+          - !Ref 'AWS::NoValue'
+        s3accountlevelpublicaccessblocksBlockPublicAcls: !If
+          - s3accountlevelpublicaccessblocksBlockPublicAcls
+          - !Ref 's3accountlevelpublicaccessblocksBlockPublicAcls'
+          - !Ref 'AWS::NoValue'
+        s3accountlevelpublicaccessblocksRestrictPublicBuckets: !If
+          - s3accountlevelpublicaccessblocksRestrictPublicBuckets
+          - !Ref 's3accountlevelpublicaccessblocksRestrictPublicBuckets'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::AccountPublicAccessBlock
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS
+  S3ACCOUNTLEVELPUBLICACCESSBLOCKSPERIODIC:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-account-level-public-access-blocks-periodic
+      Description: Checks if the required public access block settings are configured from account level.
+      InputParameters:
+        s3accountlevelpublicaccessblocksperiodicIgnorePublicAcls: !If
+          - s3accountlevelpublicaccessblocksperiodicIgnorePublicAcls
+          - !Ref 's3accountlevelpublicaccessblocksperiodicIgnorePublicAcls'
+          - !Ref 'AWS::NoValue'
+        s3accountlevelpublicaccessblocksperiodicBlockPublicPolicy: !If
+          - s3accountlevelpublicaccessblocksperiodicBlockPublicPolicy
+          - !Ref 's3accountlevelpublicaccessblocksperiodicBlockPublicPolicy'
+          - !Ref 'AWS::NoValue'
+        s3accountlevelpublicaccessblocksperiodicBlockPublicAcls: !If
+          - s3accountlevelpublicaccessblocksperiodicBlockPublicAcls
+          - !Ref 's3accountlevelpublicaccessblocksperiodicBlockPublicAcls'
+          - !Ref 'AWS::NoValue'
+        s3accountlevelpublicaccessblocksperiodicRestrictPublicBuckets: !If
+          - s3accountlevelpublicaccessblocksperiodicRestrictPublicBuckets
+          - !Ref 's3accountlevelpublicaccessblocksperiodicRestrictPublicBuckets'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS_PERIODIC
+  S3BUCKETACLPROHIBITED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-acl-prohibited
+      Description: >-
+        Checks if Amazon Simple Storage Service (Amazon S3) Buckets allow user permissions through access control lists (ACLs). The rule is NON_COMPLIANT if ACLs are configured for user access in Amazon
+        S3 Buckets.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_ACL_PROHIBITED
+  S3BUCKETBLACKLISTEDACTIONSPROHIBITED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-blacklisted-actions-prohibited
+      Description: >-
+        Checks that the S3 bucket policy does not allow blacklisted bucket-level and object-level actions for principals from other AWS Accounts. The rule is non-compliant if any blacklisted actions are
+        allowed by the S3 bucket policy.
+      InputParameters:
+        s3bucketblacklistedactionsprohibitedblacklistedActionPattern: !If
+          - s3bucketblacklistedactionsprohibitedblacklistedActionPattern
+          - !Ref 's3bucketblacklistedactionsprohibitedblacklistedActionPattern'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_BLACKLISTED_ACTIONS_PROHIBITED
+  S3BUCKETDEFAULTLOCKENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-default-lock-enabled
+      Description: Checks whether Amazon S3 bucket has lock enabled, by default. The rule is NON_COMPLIANT if the lock is not enabled.
+      InputParameters:
+        s3bucketdefaultlockenabledmode: !If
+          - s3bucketdefaultlockenabledmode
+          - !Ref 's3bucketdefaultlockenabledmode'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_DEFAULT_LOCK_ENABLED
+  S3BUCKETLEVELPUBLICACCESSPROHIBITED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-level-public-access-prohibited
+      Description: >-
+        Checks if Amazon Simple Storage Service (Amazon S3) buckets are publicly accessible. This rule is NON_COMPLIANT if an Amazon S3 bucket is not listed in the excludedPublicBuckets parameter and bucket
+        level settings are public.
+      InputParameters:
+        s3bucketlevelpublicaccessprohibitedexcludedPublicBuckets: !If
+          - s3bucketlevelpublicaccessprohibitedexcludedPublicBuckets
+          - !Ref 's3bucketlevelpublicaccessprohibitedexcludedPublicBuckets'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED
+  S3BUCKETLOGGINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-logging-enabled
+      Description: Checks whether logging is enabled for your S3 buckets.
+      InputParameters:
+        s3bucketloggingenabledtargetBucket: !If
+          - s3bucketloggingenabledtargetBucket
+          - !Ref 's3bucketloggingenabledtargetBucket'
+          - !Ref 'AWS::NoValue'
+        s3bucketloggingenabledtargetPrefix: !If
+          - s3bucketloggingenabledtargetPrefix
+          - !Ref 's3bucketloggingenabledtargetPrefix'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_LOGGING_ENABLED
+  S3BUCKETPOLICYGRANTEECHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-policy-grantee-check
+      Description: >-
+        Checks that the access granted by the Amazon S3 bucket is restricted to any of the AWS principals, federated users, service principals, IP addresses, or VPCs that you provide. The rule is COMPLIANT
+        if a bucket policy is not present.
+      InputParameters:
+        s3bucketpolicygranteecheckawsPrincipals: !If
+          - s3bucketpolicygranteecheckawsPrincipals
+          - !Ref 's3bucketpolicygranteecheckawsPrincipals'
+          - !Ref 'AWS::NoValue'
+        s3bucketpolicygranteecheckservicePrincipals: !If
+          - s3bucketpolicygranteecheckservicePrincipals
+          - !Ref 's3bucketpolicygranteecheckservicePrincipals'
+          - !Ref 'AWS::NoValue'
+        s3bucketpolicygranteecheckfederatedUsers: !If
+          - s3bucketpolicygranteecheckfederatedUsers
+          - !Ref 's3bucketpolicygranteecheckfederatedUsers'
+          - !Ref 'AWS::NoValue'
+        s3bucketpolicygranteecheckipAddresses: !If
+          - s3bucketpolicygranteecheckipAddresses
+          - !Ref 's3bucketpolicygranteecheckipAddresses'
+          - !Ref 'AWS::NoValue'
+        s3bucketpolicygranteecheckvpcIds: !If
+          - s3bucketpolicygranteecheckvpcIds
+          - !Ref 's3bucketpolicygranteecheckvpcIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_POLICY_GRANTEE_CHECK
+  S3BUCKETPOLICYNOTMOREPERMISSIVE:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-policy-not-more-permissive
+      Description: Verifies that your Amazon S3 bucket policies do not allow other inter-account permissions than the control S3 bucket policy that you provide.
+      InputParameters:
+        s3bucketpolicynotmorepermissivecontrolPolicy: !If
+          - s3bucketpolicynotmorepermissivecontrolPolicy
+          - !Ref 's3bucketpolicynotmorepermissivecontrolPolicy'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_POLICY_NOT_MORE_PERMISSIVE
+  S3BUCKETPUBLICREADPROHIBITED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-public-read-prohibited
+      Description: Checks that your Amazon S3 buckets do not allow public read access. The rule checks the Block Public Access settings, the bucket policy, and the bucket access control list (ACL).
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_READ_PROHIBITED
+  S3BUCKETPUBLICWRITEPROHIBITED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-public-write-prohibited
+      Description: Checks that your Amazon S3 buckets do not allow public write access. The rule checks the Block Public Access settings, the bucket policy, and the bucket access control list (ACL).
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_WRITE_PROHIBITED
+  S3BUCKETREPLICATIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-replication-enabled
+      Description: Checks if your Amazon S3 buckets have replication rules enabled. The rule is NON_COMPLIANT if an S3 bucket does not have a replication rule or has a replication rule that is not enabled.
+      InputParameters:
+        s3bucketreplicationenabledReplicationType: !If
+          - s3bucketreplicationenabledReplicationType
+          - !Ref 's3bucketreplicationenabledReplicationType'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_REPLICATION_ENABLED
+  S3BUCKETSERVERSIDEENCRYPTIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-server-side-encryption-enabled
+      Description: Checks that your Amazon S3 bucket either has S3 default encryption enabled or that the S3 bucket policy explicitly denies put-object requests without server side encryption.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED
+  S3BUCKETSSLREQUESTSONLY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-ssl-requests-only
+      Description: Checks whether S3 buckets have policies that require requests to use Secure Socket Layer (SSL).
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_SSL_REQUESTS_ONLY
+  S3BUCKETVERSIONINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-bucket-versioning-enabled
+      Description: Checks whether versioning is enabled for your S3 buckets.
+      InputParameters:
+        s3bucketversioningenabledisMfaDeleteEnabled: !If
+          - s3bucketversioningenabledisMfaDeleteEnabled
+          - !Ref 's3bucketversioningenabledisMfaDeleteEnabled'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_VERSIONING_ENABLED
+  S3DEFAULTENCRYPTIONKMS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-default-encryption-kms
+      Description: Checks whether the Amazon S3 buckets are encrypted with AWS Key Management Service(AWS KMS). The rule is NON_COMPLIANT if the Amazon S3 bucket is not encrypted with AWS KMS key.
+      InputParameters:
+        s3defaultencryptionkmskmsKeyArns: !If
+          - s3defaultencryptionkmskmsKeyArns
+          - !Ref 's3defaultencryptionkmskmsKeyArns'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_DEFAULT_ENCRYPTION_KMS
+  S3EVENTNOTIFICATIONSENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-event-notifications-enabled
+      Description: >-
+        Checks if Amazon S3 Events Notifications are enabled on an S3 bucket. The rule is NON_COMPLIANT if S3 Events Notifications are not set on a bucket, or if the event type or destination do not match
+        the eventTypes and destinationArn parameters.
+      InputParameters:
+        s3eventnotificationsenableddestinationArn: !If
+          - s3eventnotificationsenableddestinationArn
+          - !Ref 's3eventnotificationsenableddestinationArn'
+          - !Ref 'AWS::NoValue'
+        s3eventnotificationsenabledeventTypes: !If
+          - s3eventnotificationsenabledeventTypes
+          - !Ref 's3eventnotificationsenabledeventTypes'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_EVENT_NOTIFICATIONS_ENABLED
+  S3LASTBACKUPRECOVERYPOINTCREATED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-last-backup-recovery-point-created
+      Description: >-
+        Checks if a recovery point was created for Amazon Simple Storage Service (Amazon S3). The rule is NON_COMPLIANT if the Amazon S3 bucket does not have a corresponding recovery point created within
+        the specified time period.
+      InputParameters:
+        s3lastbackuprecoverypointcreatedresourceTags: !If
+          - s3lastbackuprecoverypointcreatedresourceTags
+          - !Ref 's3lastbackuprecoverypointcreatedresourceTags'
+          - !Ref 'AWS::NoValue'
+        s3lastbackuprecoverypointcreatedresourceId: !If
+          - s3lastbackuprecoverypointcreatedresourceId
+          - !Ref 's3lastbackuprecoverypointcreatedresourceId'
+          - !Ref 'AWS::NoValue'
+        s3lastbackuprecoverypointcreatedrecoveryPointAgeValue: !If
+          - s3lastbackuprecoverypointcreatedrecoveryPointAgeValue
+          - !Ref 's3lastbackuprecoverypointcreatedrecoveryPointAgeValue'
+          - !Ref 'AWS::NoValue'
+        s3lastbackuprecoverypointcreatedrecoveryPointAgeUnit: !If
+          - s3lastbackuprecoverypointcreatedrecoveryPointAgeUnit
+          - !Ref 's3lastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_LAST_BACKUP_RECOVERY_POINT_CREATED
+  S3LIFECYCLEPOLICYCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-lifecycle-policy-check
+      Description: >-
+        Checks if a lifecycle rule is configured for an Amazon Simple Storage Service (Amazon S3) bucket. The rule is NON_COMPLIANT if there is no active lifecycle configuration rules or the configuration
+        does not match with the parameter values.
+      InputParameters:
+        s3lifecyclepolicychecktargetTransitionDays: !If
+          - s3lifecyclepolicychecktargetTransitionDays
+          - !Ref 's3lifecyclepolicychecktargetTransitionDays'
+          - !Ref 'AWS::NoValue'
+        s3lifecyclepolicychecktargetExpirationDays: !If
+          - s3lifecyclepolicychecktargetExpirationDays
+          - !Ref 's3lifecyclepolicychecktargetExpirationDays'
+          - !Ref 'AWS::NoValue'
+        s3lifecyclepolicychecktargetTransitionStorageClass: !If
+          - s3lifecyclepolicychecktargetTransitionStorageClass
+          - !Ref 's3lifecyclepolicychecktargetTransitionStorageClass'
+          - !Ref 'AWS::NoValue'
+        s3lifecyclepolicychecktargetPrefix: !If
+          - s3lifecyclepolicychecktargetPrefix
+          - !Ref 's3lifecyclepolicychecktargetPrefix'
+          - !Ref 'AWS::NoValue'
+        s3lifecyclepolicycheckbucketNames: !If
+          - s3lifecyclepolicycheckbucketNames
+          - !Ref 's3lifecyclepolicycheckbucketNames'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_LIFECYCLE_POLICY_CHECK
+  S3RESOURCESPROTECTEDBYBACKUPPLAN:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-resources-protected-by-backup-plan
+      Description: Checks if Amazon Simple Storage Service (Amazon S3) buckets are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon S3 bucket is not covered by a backup plan.
+      InputParameters:
+        s3resourcesprotectedbybackupplanresourceTags: !If
+          - s3resourcesprotectedbybackupplanresourceTags
+          - !Ref 's3resourcesprotectedbybackupplanresourceTags'
+          - !Ref 'AWS::NoValue'
+        s3resourcesprotectedbybackupplanresourceId: !If
+          - s3resourcesprotectedbybackupplanresourceId
+          - !Ref 's3resourcesprotectedbybackupplanresourceId'
+          - !Ref 'AWS::NoValue'
+        s3resourcesprotectedbybackupplancrossRegionList: !If
+          - s3resourcesprotectedbybackupplancrossRegionList
+          - !Ref 's3resourcesprotectedbybackupplancrossRegionList'
+          - !Ref 'AWS::NoValue'
+        s3resourcesprotectedbybackupplancrossAccountList: !If
+          - s3resourcesprotectedbybackupplancrossAccountList
+          - !Ref 's3resourcesprotectedbybackupplancrossAccountList'
+          - !Ref 'AWS::NoValue'
+        s3resourcesprotectedbybackupplanmaxRetentionDays: !If
+          - s3resourcesprotectedbybackupplanmaxRetentionDays
+          - !Ref 's3resourcesprotectedbybackupplanmaxRetentionDays'
+          - !Ref 'AWS::NoValue'
+        s3resourcesprotectedbybackupplanminRetentionDays: !If
+          - s3resourcesprotectedbybackupplanminRetentionDays
+          - !Ref 's3resourcesprotectedbybackupplanminRetentionDays'
+          - !Ref 'AWS::NoValue'
+        s3resourcesprotectedbybackupplanbackupVaultLockCheck: !If
+          - s3resourcesprotectedbybackupplanbackupVaultLockCheck
+          - !Ref 's3resourcesprotectedbybackupplanbackupVaultLockCheck'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+  S3VERSIONLIFECYCLEPOLICYCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-version-lifecycle-policy-check
+      Description: Checks if Amazon Simple Storage Service (Amazon S3) version enabled buckets have lifecycle policy configured. The rule is NON_COMPLIANT if Amazon S3 lifecycle policy is not enabled.
+      InputParameters:
+        s3versionlifecyclepolicycheckbucketNames: !If
+          - s3versionlifecyclepolicycheckbucketNames
+          - !Ref 's3versionlifecyclepolicycheckbucketNames'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_VERSION_LIFECYCLE_POLICY_CHECK
+  SECRETSMANAGERROTATIONENABLEDCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: secretsmanager-rotation-enabled-check
+      Description: >-
+        Checks whether AWS Secret Manager secret has rotation enabled. If the maximumAllowedRotationFrequency or the maximumAllowedRotationFrequencyInHours parameter is specified, the rotation frequency
+        of the secret is compared with the maximum allowed frequency.
+      InputParameters:
+        secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequency: !If
+          - secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequency
+          - !Ref 'secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequency'
+          - !Ref 'AWS::NoValue'
+        secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequencyInHours: !If
+          - secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequencyInHours
+          - !Ref 'secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequencyInHours'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SecretsManager::Secret
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECRETSMANAGER_ROTATION_ENABLED_CHECK
+  SECRETSMANAGERSCHEDULEDROTATIONSUCCESSCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: secretsmanager-scheduled-rotation-success-check
+      Description: Checks and verifies whether AWS Secret Manager secret rotation has rotated successfully as per the rotation schedule.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SecretsManager::Secret
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECRETSMANAGER_SCHEDULED_ROTATION_SUCCESS_CHECK
+  SECRETSMANAGERSECRETPERIODICROTATION:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: secretsmanager-secret-periodic-rotation
+      Description: >-
+        Checks if AWS Secrets Manager secrets have been rotated in the past 90 days by examining 'LastRotatedDate' value of the secret.  If 'LastRotatedDate' doesn't exist then this rule will check for
+        the creation date of the secret.
+      InputParameters:
+        secretsmanagersecretperiodicrotationmaxDaysSinceRotation: !If
+          - secretsmanagersecretperiodicrotationmaxDaysSinceRotation
+          - !Ref 'secretsmanagersecretperiodicrotationmaxDaysSinceRotation'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECRETSMANAGER_SECRET_PERIODIC_ROTATION
+  SECRETSMANAGERSECRETUNUSED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: secretsmanager-secret-unused
+      Description: Checks if AWS Secrets Manager secrets have been accessed in the past 90 days. This rule is NON_COMPLIANT if a secret has not been accessed in 90 days.
+      InputParameters:
+        secretsmanagersecretunusedunusedForDays: !If
+          - secretsmanagersecretunusedunusedForDays
+          - !Ref 'secretsmanagersecretunusedunusedForDays'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECRETSMANAGER_SECRET_UNUSED
+  SECRETSMANAGERUSINGCMK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: secretsmanager-using-cmk
+      Description: >-
+        Checks if all secrets in AWS Secrets Manager are encrypted using an AWS Key Management Service (AWS KMS) customer master key (CMK). This rule is NON_COMPLIANT if a secret is encrypted using the
+        default AWS KMS key
+      InputParameters:
+        secretsmanagerusingcmkkmsKeyArns: !If
+          - secretsmanagerusingcmkkmsKeyArns
+          - !Ref 'secretsmanagerusingcmkkmsKeyArns'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SecretsManager::Secret
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECRETSMANAGER_USING_CMK
+  SECURITYACCOUNTINFORMATIONPROVIDED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: security-account-information-provided
+      Description: Checks if you have provided security contact information for your AWS account contacts. The rule is NON_COMPLIANT if security contact information within the account is not provided.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes: []
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECURITY_ACCOUNT_INFORMATION_PROVIDED
+  SECURITYHUBENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: securityhub-enabled
+      Description: Checks that AWS Security Hub is enabled for an AWS Account. The rule is NON_COMPLIANT if AWS Security Hub is not enabled.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: SECURITYHUB_ENABLED
+  SERVICEVPCENDPOINTENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: service-vpc-endpoint-enabled
+      Description: >-
+        Checks whether Service Endpoint for the service provided in rule parameter is created for each Amazon VPC. The rule returns NON_COMPLIANT if an Amazon VPC doesn't have a VPC endpoint created for
+        the service.
+      InputParameters:
+        servicevpcendpointenabledserviceName: !If
+          - servicevpcendpointenabledserviceName
+          - !Ref 'servicevpcendpointenabledserviceName'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: SERVICE_VPC_ENDPOINT_ENABLED
+  SHIELDDRTACCESS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: shield-drt-access
+      Description: Verify that DDoS response team (DRT) can access AWS account. The rule is NON_COMPLIANT if AWS Shield Advanced is enabled but the role for DRT access is not configured.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: SHIELD_DRT_ACCESS
+  SNSENCRYPTEDKMS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: sns-encrypted-kms
+      Description: Checks whether Amazon SNS topic is encrypted with AWS Key Management Service (AWS KMS). The rule is NON_COMPLIANT if the Amazon SNS topic is not encrypted with AWS KMS.
+      InputParameters:
+        snsencryptedkmskmsKeyIds: !If
+          - snsencryptedkmskmsKeyIds
+          - !Ref 'snsencryptedkmskmsKeyIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SNS::Topic
+      Source:
+        Owner: AWS
+        SourceIdentifier: SNS_ENCRYPTED_KMS
+  SNSTOPICMESSAGEDELIVERYNOTIFICATIONENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: sns-topic-message-delivery-notification-enabled
+      Description: >-
+        Checks if Amazon Simple Notification Service (SNS) logging is enabled for the delivery status of notification messages sent to a topic for the endpoints. The rule is NON_COMPLIANT if the delivery
+        status notification for messages is not enabled.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SNS::Topic
+      Source:
+        Owner: AWS
+        SourceIdentifier: SNS_TOPIC_MESSAGE_DELIVERY_NOTIFICATION_ENABLED
+  SSMDOCUMENTNOTPUBLIC:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ssm-document-not-public
+      Description: Checks if AWS Systems Manager documents owned by the account are public. This rule is NON_COMPLIANT if SSM documents with owner 'Self' are public.
+      InputParameters: {}
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: SSM_DOCUMENT_NOT_PUBLIC
+  SUBNETAUTOASSIGNPUBLICIPDISABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: subnet-auto-assign-public-ip-disabled
+      Description: Checks if Amazon Virtual Private Cloud (Amazon VPC) subnets are assigned a public IP address. This rule is NON_COMPLIANT if Amazon VPC has subnets that are assigned a public IP address.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Subnet
+      Source:
+        Owner: AWS
+        SourceIdentifier: SUBNET_AUTO_ASSIGN_PUBLIC_IP_DISABLED
+  VPCDEFAULTSECURITYGROUPCLOSED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: vpc-default-security-group-closed
+      Description: >-
+        Checks that the default security group of any Amazon Virtual Private Cloud (VPC) does not allow inbound or outbound traffic. The rule is non-compliant if the default security group has one or more
+        inbound or outbound traffic.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::SecurityGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_DEFAULT_SECURITY_GROUP_CLOSED
+  VPCFLOWLOGSENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: vpc-flow-logs-enabled
+      Description: Checks whether Amazon Virtual Private Cloud flow logs are found and enabled for Amazon VPC.
+      InputParameters:
+        vpcflowlogsenabledtrafficType: !If
+          - vpcflowlogsenabledtrafficType
+          - !Ref 'vpcflowlogsenabledtrafficType'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_FLOW_LOGS_ENABLED
+  VPCNETWORKACLUNUSEDCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: vpc-network-acl-unused-check
+      Description: Checks if there are unused Network Access Control Lists (NACLs). The rule is NON_COMPLIANT if an NACL is not associated with a subnet.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::NetworkAcl
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_NETWORK_ACL_UNUSED_CHECK
+  VPCPEERINGDNSRESOLUTIONCHECK:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: vpc-peering-dns-resolution-check
+      Description: Checks if DNS resolution from accepter/requester VPC to private IP is enabled. The rule is NON_COMPLIANT if DNS resolution from accepter/requester VPC to private IP is not enabled.
+      InputParameters:
+        vpcpeeringdnsresolutioncheckvpcIds: !If
+          - vpcpeeringdnsresolutioncheckvpcIds
+          - !Ref 'vpcpeeringdnsresolutioncheckvpcIds'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::VPCPeeringConnection
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_PEERING_DNS_RESOLUTION_CHECK
+  VPCSGOPENONLYTOAUTHORIZEDPORTS:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: vpc-sg-open-only-to-authorized-ports
+      Description: >-
+        Checks whether any security groups with inbound 0.0.0.0/0 have TCP or UDP ports accessible. The rule is NON_COMPLIANT when a security group with inbound 0.0.0.0/0 has a port accessible which is
+        not specified in the rule parameters.
+      InputParameters:
+        vpcsgopenonlytoauthorizedportsauthorizedTcpPorts: !If
+          - vpcsgopenonlytoauthorizedportsauthorizedTcpPorts
+          - !Ref 'vpcsgopenonlytoauthorizedportsauthorizedTcpPorts'
+          - !Ref 'AWS::NoValue'
+        vpcsgopenonlytoauthorizedportsauthorizedUdpPorts: !If
+          - vpcsgopenonlytoauthorizedportsauthorizedUdpPorts
+          - !Ref 'vpcsgopenonlytoauthorizedportsauthorizedUdpPorts'
+          - !Ref 'AWS::NoValue'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::SecurityGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_SG_OPEN_ONLY_TO_AUTHORIZED_PORTS
+  VPCVPN2TUNNELSUP:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: vpc-vpn-2-tunnels-up
+      Description: Checks that both VPN tunnels provided by AWS Site-to-Site VPN are in UP status. The rule returns NON_COMPLIANT if one or both tunnels are in DOWN status.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::VPNConnection
+      Source:
+        Owner: AWS
+        SourceIdentifier: VPC_VPN_2_TUNNELS_UP
+  WAFV2LOGGINGENABLED:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: wafv2-logging-enabled
+      Description: >-
+        Checks whether logging is enabled on AWS Web Application Firewall (WAFV2) regional and global web access control list (ACLs). The rule is NON_COMPLIANT if the logging is enabled but the logging
+        destination does not match the value of the parameter.
+      InputParameters:
+        wafv2loggingenabledKinesisFirehoseDeliveryStreamArns: !If
+          - wafv2loggingenabledKinesisFirehoseDeliveryStreamArns
+          - !Ref 'wafv2loggingenabledKinesisFirehoseDeliveryStreamArns'
+          - !Ref 'AWS::NoValue'
+      Scope: {}
+      Source:
+        Owner: AWS
+        SourceIdentifier: WAFV2_LOGGING_ENABLED
+  WAFV2RULEGROUPNOTEMPTY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: wafv2-rulegroup-not-empty
+      Description: Checks if WAFv2 Rule Groups contain rules. The rule is NON_COMPLIANT if there are no rules in a WAFv2 Rule Group.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::WAFv2::RuleGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: WAFV2_RULEGROUP_NOT_EMPTY
+  WAFV2WEBACLNOTEMPTY:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: wafv2-webacl-not-empty
+      Description: Checks if a WAFv2 Web ACL contains any WAF rules or WAF rule groups. This rule is NON_COMPLIANT if a Web ACL does not contain any WAF rules or WAF rule groups.
+      InputParameters: {}
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::WAFv2::WebACL
+      Source:
+        Owner: AWS
+        SourceIdentifier: WAFV2_WEBACL_NOT_EMPTY
+Parameters:
+  netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions:
+    Type: String
+    Description: Comma-separated list of values. You can select a max of two. Valid values include 'aws:pass', 'aws:drop', and 'aws:forward_to_sfe'.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  netfwpolicydefaultactionfullpacketsstatelessDefaultActions:
+    Type: String
+    Description: Comma-separated list of values. You can select a max of two. Valid values include 'aws:pass', 'aws:drop', and 'aws:forward_to_sfe'.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  nounrestrictedroutetoigwrouteTableIds:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of route table IDs that can have routes to an Internet Gateway with a destination CIDR block of '0.0.0.0/0' or '::/0'.
+  opensearchauditloggingenabledcloudWatchLogsLogGroupArnList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of Amazon CloudWatch Logs log groups that should be configured for audit logs.
+  opensearchhttpsrequiredtlsPolicies:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of TLS security policies to check against the Amazon OpensSearch domain.
+  opensearchlogstocloudwatchlogTypes:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of logs that are enabled. Valid values are 'search', 'index', 'error'.
+  rdsclusterdefaultadmincheckvalidAdminUserNames:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of admin username(s) that Amazon RDS clusters can use. Cannot include 'postgres' or 'admin' as valid username(s) as these are default values.
+  rdsenhancedmonitoringenabledmonitoringInterval:
+    Type: String
+    Default: ''
+    Description: An integer value in seconds between points when enhanced monitoring metrics are collected for the database instance. The valid values are 1, 5, 10, 15, 30, and 60.
+  rdsinbackupplanMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  rdsinstancedefaultadmincheckvalidAdminUserNames:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of admin username(s) that Amazon RDS instances can use. (Cannot include 'postgres' or 'admin' as valid username(s) as these are default values.)
+  rdsinstancedeletionprotectionenableddatabaseEngines:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of RDS database engines to include in the evaluation of the rule.
+  rdslastbackuprecoverypointcreatedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  rdslastbackuprecoverypointcreatedresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags of Amazon RDS instances for the rule to check, in JSON format.
+  rdslastbackuprecoverypointcreatedresourceId:
+    Type: String
+    Default: ''
+    Description: ID of Amazon RDS instance for the rule to check.
+  rdslastbackuprecoverypointcreatedrecoveryPointAgeValue:
+    Type: String
+    Default: '1'
+    Description: Numerical value for maximum allowed age. No more than 744 for hours, 31 for days.
+  rdslastbackuprecoverypointcreatedrecoveryPointAgeUnit:
+    Type: String
+    Default: days
+    Description: 'Unit of time for maximum allowed age. Accepted values: ''hours'', ''days''.'
+  rdsloggingenabledadditionalLogs:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of engine names and log type names.
+  rdsresourcesprotectedbybackupplanMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  rdsresourcesprotectedbybackupplanresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags for Amazon RDS instances for the rule to check, in JSON format.
+  rdsresourcesprotectedbybackupplanresourceId:
+    Type: String
+    Default: ''
+    Description: ID of Amazon RDS instance for the rule to check.
+  rdsresourcesprotectedbybackupplancrossRegionList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination regions for the cross-region backup copy to be kept
+  rdsresourcesprotectedbybackupplancrossAccountList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination accounts for cross-account backup copy to be kept
+  rdsresourcesprotectedbybackupplanmaxRetentionDays:
+    Type: String
+    Default: ''
+    Description: The maximum retention period in days for the Backup Vault Lock
+  rdsresourcesprotectedbybackupplanminRetentionDays:
+    Type: String
+    Default: ''
+    Description: The minimum retention period in days for the Backup Vault Lock
+  rdsresourcesprotectedbybackupplanbackupVaultLockCheck:
+    Type: String
+    Default: ''
+    Description: 'Accepted values: ''True'' or ''False''. Enter ''True'' for the rule to check if the resource is backed up in a locked vault'
+  rdsstorageencryptedkmsKeyId:
+    Type: String
+    Default: ''
+    Description: KMS key ID or ARN used to encrypt the stosrage.
+  requiredtagstag1Key:
+    Type: String
+    Default: CostCenter
+    Description: Key of the required tag.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  requiredtagstag1Value:
+    Type: String
+    Default: ''
+    Description: Optional value of the required tag. Separate multiple values with commas.
+  requiredtagstag2Key:
+    Type: String
+    Default: ''
+    Description: Key of a second required tag.
+  requiredtagstag2Value:
+    Type: String
+    Default: ''
+    Description: Optional value of the second required tag. Separate multiple values with commas.
+  requiredtagstag3Key:
+    Type: String
+    Default: ''
+    Description: Key of a third required tag.
+  requiredtagstag3Value:
+    Type: String
+    Default: ''
+    Description: Optional value of the third required tag. Separate multiple values with commas.
+  requiredtagstag4Key:
+    Type: String
+    Default: ''
+    Description: Key of a fourth required tag.
+  requiredtagstag4Value:
+    Type: String
+    Default: ''
+    Description: Optional value of the fourth required tag. Separate multiple values with commas.
+  requiredtagstag5Key:
+    Type: String
+    Default: ''
+    Description: Key of a fifth required tag.
+  requiredtagstag5Value:
+    Type: String
+    Default: ''
+    Description: Optional value of the fifth required tag. Separate multiple values with commas.
+  requiredtagstag6Key:
+    Type: String
+    Default: ''
+    Description: Key of a sixth required tag.
+  requiredtagstag6Value:
+    Type: String
+    Default: ''
+    Description: Optional value of the sixth required tag. Separate multiple values with commas.
+  rootaccountmfaenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  s3accountlevelpublicaccessblocksIgnorePublicAcls:
+    Type: String
+    Default: 'True'
+    Description: IgnorePublicAcls is enforced or not, default True
+  s3accountlevelpublicaccessblocksBlockPublicPolicy:
+    Type: String
+    Default: 'True'
+    Description: BlockPublicPolicy is enforced or not, default True
+  s3accountlevelpublicaccessblocksBlockPublicAcls:
+    Type: String
+    Default: 'True'
+    Description: BlockPublicAcls is enforced or not, default True
+  s3accountlevelpublicaccessblocksRestrictPublicBuckets:
+    Type: String
+    Default: 'True'
+    Description: RestrictPublicBuckets is enforced or not, default True
+  s3accountlevelpublicaccessblocksperiodicMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  s3accountlevelpublicaccessblocksperiodicIgnorePublicAcls:
+    Type: String
+    Default: ''
+    Description: IgnorePublicAcls is enforced or not, default True
+  s3accountlevelpublicaccessblocksperiodicBlockPublicPolicy:
+    Type: String
+    Default: ''
+    Description: BlockPublicPolicy is enforced or not, default True
+  s3accountlevelpublicaccessblocksperiodicBlockPublicAcls:
+    Type: String
+    Default: ''
+    Description: BlockPublicAcls is enforced or not, default True
+  s3accountlevelpublicaccessblocksperiodicRestrictPublicBuckets:
+    Type: String
+    Default: ''
+    Description: RestrictPublicBuckets is enforced or not, default True
+  s3bucketblacklistedactionsprohibitedblacklistedActionPattern:
+    Type: String
+    Description: Comma-separated list of blacklisted action patterns, for example, s3:GetBucket* and s3:DeleteObject.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  s3bucketdefaultlockenabledmode:
+    Type: String
+    Default: ''
+    Description: 'mode: (optional): A mode parameter with valid values of GOVERNANCE or COMPLIANCE.'
+  s3bucketlevelpublicaccessprohibitedexcludedPublicBuckets:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of known allowed public Amazon S3 bucket names.
+  s3bucketloggingenabledtargetBucket:
+    Type: String
+    Default: ''
+    Description: Target S3 bucket for storing server access logs.
+  s3bucketloggingenabledtargetPrefix:
+    Type: String
+    Default: ''
+    Description: Prefix of the S3 bucket for storing server access logs.
+  s3bucketpolicygranteecheckawsPrincipals:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of principals such as IAM User ARNs, IAM Role ARNs and AWS accounts, for example 'arn:aws:iam::111122223333:user/Alice, arn:aws:iam::444455556666:role/Bob, 123456789012'.
+  s3bucketpolicygranteecheckservicePrincipals:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of service principals, for example 'cloudtrail.amazonaws.com, lambda.amazonaws.com'.
+  s3bucketpolicygranteecheckfederatedUsers:
+    Type: String
+    Default: ''
+    Description: >-
+      Comma-separated list of identity providers for web identity federation such as Amazon Cognito and SAML identity providers. For example 'cognito-identity.amazonaws.com, arn:aws:iam::111122223333:saml-provider/my-provider'.
+  s3bucketpolicygranteecheckipAddresses:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of CIDR formatted IP addresses, for example '10.0.0.1, 192.168.1.0/24, 2001:db8::/32'.
+  s3bucketpolicygranteecheckvpcIds:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of Amazon Virtual Private Clouds (Amazon VPC) IDs, for example 'vpc-1234abc0, vpc-ab1234c0'.
+  s3bucketpolicynotmorepermissivecontrolPolicy:
+    Type: String
+    Description: Amazon S3 bucket policy that defines an upper bound on the permissions of your S3 buckets. The policy can be a maximum of 1024 characters long.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  s3bucketpublicreadprohibitedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  s3bucketpublicwriteprohibitedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  s3bucketreplicationenabledReplicationType:
+    Type: String
+    Default: ''
+    Description: >-
+      Accepted values: 'CROSS-REGION' and 'SAME-REGION'. Enter 'CROSS-REGION' for the rule to check that all buckets have only Cross-Region Replication enabled. Enter 'SAME-REGION' for the rule to check
+      that all buckets have only Same-Region Replication enabled.
+  s3bucketversioningenabledisMfaDeleteEnabled:
+    Type: String
+    Default: ''
+    Description: MFA delete is enabled for your S3 buckets.
+  s3defaultencryptionkmskmsKeyArns:
+    Type: String
+    Default: ''
+    Description: Comma separated list of AWS KMS key ARNs allowed for encrypting Amazon S3 Buckets.
+  s3eventnotificationsenableddestinationArn:
+    Type: String
+    Default: ''
+    Description: The Amazon Resource Name (ARN) of the destination for the event notification (Amazon SNS topic, AWS Lambda, Amazon SQS Queue).
+  s3eventnotificationsenabledeventTypes:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of the preferred Amazon S3 event types
+  s3lastbackuprecoverypointcreatedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  s3lastbackuprecoverypointcreatedresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags of Amazon S3 bucket for the rule to check, in JSON format.
+  s3lastbackuprecoverypointcreatedresourceId:
+    Type: String
+    Default: ''
+    Description: Name of Amazon S3 bucket for the rule to check.
+  s3lastbackuprecoverypointcreatedrecoveryPointAgeValue:
+    Type: String
+    Default: '1'
+    Description: Numerical value for maximum allowed age. No more than 744 for hours, 31 for days.
+  s3lastbackuprecoverypointcreatedrecoveryPointAgeUnit:
+    Type: String
+    Default: days
+    Description: 'Unit of time for maximum allowed age. Accepted values: ''hours'', ''days''.'
+  s3lifecyclepolicychecktargetTransitionDays:
+    Type: String
+    Default: ''
+    Description: Number of days after object creation when objects are transitioned to a specified storage class (for example, 30 days).
+  s3lifecyclepolicychecktargetExpirationDays:
+    Type: String
+    Default: ''
+    Description: Number of days after object creation when objects are deleted (for example, 395 days).
+  s3lifecyclepolicychecktargetTransitionStorageClass:
+    Type: String
+    Default: ''
+    Description: >-
+      Destination storage class type (for example, Amazon S3 Standard-Infrequent Access (S3 Standard-IA). For more information, see https: //docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html.
+  s3lifecyclepolicychecktargetPrefix:
+    Type: String
+    Default: ''
+    Description: Amazon S3 Object prefix to identify one or more objects.
+  s3lifecyclepolicycheckbucketNames:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of Amazon S3 bucket names that have lifecycle policy enabled.
+  s3resourcesprotectedbybackupplanMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  s3resourcesprotectedbybackupplanresourceTags:
+    Type: String
+    Default: ''
+    Description: Tags for Amazon S3 buckets for the rule to check, in JSON format.
+  s3resourcesprotectedbybackupplanresourceId:
+    Type: String
+    Default: ''
+    Description: Name of Amazon S3 bucket for the rule to check.
+  s3resourcesprotectedbybackupplancrossRegionList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination regions for the cross-region backup copy to be kept
+  s3resourcesprotectedbybackupplancrossAccountList:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of destination accounts for cross-account backup copy to be kept
+  s3resourcesprotectedbybackupplanmaxRetentionDays:
+    Type: String
+    Default: ''
+    Description: The maximum retention period in days for the Backup Vault Lock
+  s3resourcesprotectedbybackupplanminRetentionDays:
+    Type: String
+    Default: ''
+    Description: The minimum retention period in days for the Backup Vault Lock
+  s3resourcesprotectedbybackupplanbackupVaultLockCheck:
+    Type: String
+    Default: ''
+    Description: 'Accepted values: ''True'' or ''False''. Enter ''True'' for the rule to check if the resource is backed up in a locked vault'
+  s3versionlifecyclepolicycheckbucketNames:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of Amazon S3 bucket names that have lifecycle policy enabled.
+  secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequency:
+    Type: String
+    Default: ''
+    Description: Maximum allowed rotation frequency of the secret in days.
+  secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequencyInHours:
+    Type: String
+    Default: ''
+    Description: Maximum allowed rotation frequency of the secret in hours.
+  secretsmanagersecretperiodicrotationMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  secretsmanagersecretperiodicrotationmaxDaysSinceRotation:
+    Type: String
+    Default: ''
+    Description: 'The number of days in which a secret can remain unchanged. '
+  secretsmanagersecretunusedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  secretsmanagersecretunusedunusedForDays:
+    Type: String
+    Default: ''
+    Description: The number of days in which a secret can remain unused. Valid value is a positive integer.
+  secretsmanagerusingcmkkmsKeyArns:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of KMS key Amazon Resource Names (ARNs) to check if the keys are used in the encryption.
+  securityaccountinformationprovidedMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  securityhubenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  servicevpcendpointenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  servicevpcendpointenabledserviceName:
+    Type: String
+    Description: 'The short name or suffix for the service. Note: To get a list of available service names or valid suffix list, use DescribeVpcEndpointServices.'
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+  shielddrtaccessMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  snsencryptedkmskmsKeyIds:
+    Type: String
+    Default: ''
+    Description: Comma separated list of AWS KMS key ARNs allowed for encrypting Amazon SNS Topic.
+  ssmdocumentnotpublicMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  vpcflowlogsenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  vpcflowlogsenabledtrafficType:
+    Type: String
+    Default: ''
+    Description: TrafficType of flow logs
+  vpcpeeringdnsresolutioncheckvpcIds:
+    Type: String
+    Default: ''
+    Description: Comma-separated list of VPC IDs to be checked.
+  vpcsgopenonlytoauthorizedportsauthorizedTcpPorts:
+    Type: String
+    Default: ''
+    Description: ' Comma-separated list of TCP ports authorized to be open to 0.0.0.0/0. Ranges are defined by dash, for example, "443,1020-1025".'
+  vpcsgopenonlytoauthorizedportsauthorizedUdpPorts:
+    Type: String
+    Default: ''
+    Description: ' Comma-separated list of UDP ports authorized to be open to 0.0.0.0/0. Ranges are defined by dash, for example, "500,1020-1025".'
+  wafv2loggingenabledMaximumExecutionFrequency:
+    Type: String
+    Default: TwentyFour_Hours
+    Description: The frequency that you want AWS Config to run evaluations for the rule.
+    MinLength: '1'
+    ConstraintDescription: This parameter is required.
+    AllowedValues:
+      - One_Hour
+      - Three_Hours
+      - Six_Hours
+      - Twelve_Hours
+      - TwentyFour_Hours
+  wafv2loggingenabledKinesisFirehoseDeliveryStreamArns:
+    Type: String
+    Default: ''
+    Description: Comma separated list of Kinesis Firehose delivery stream ARNs
+Conditions:
+  netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions: !Not
+    - !Equals
+      - ''
+      - !Ref 'netfwpolicydefaultactionfragmentpacketsstatelessFragmentDefaultActions'
+  netfwpolicydefaultactionfullpacketsstatelessDefaultActions: !Not
+    - !Equals
+      - ''
+      - !Ref 'netfwpolicydefaultactionfullpacketsstatelessDefaultActions'
+  nounrestrictedroutetoigwrouteTableIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'nounrestrictedroutetoigwrouteTableIds'
+  opensearchauditloggingenabledcloudWatchLogsLogGroupArnList: !Not
+    - !Equals
+      - ''
+      - !Ref 'opensearchauditloggingenabledcloudWatchLogsLogGroupArnList'
+  opensearchhttpsrequiredtlsPolicies: !Not
+    - !Equals
+      - ''
+      - !Ref 'opensearchhttpsrequiredtlsPolicies'
+  opensearchlogstocloudwatchlogTypes: !Not
+    - !Equals
+      - ''
+      - !Ref 'opensearchlogstocloudwatchlogTypes'
+  rdsclusterdefaultadmincheckvalidAdminUserNames: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsclusterdefaultadmincheckvalidAdminUserNames'
+  rdsenhancedmonitoringenabledmonitoringInterval: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsenhancedmonitoringenabledmonitoringInterval'
+  rdsinstancedefaultadmincheckvalidAdminUserNames: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsinstancedefaultadmincheckvalidAdminUserNames'
+  rdsinstancedeletionprotectionenableddatabaseEngines: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsinstancedeletionprotectionenableddatabaseEngines'
+  rdslastbackuprecoverypointcreatedresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdslastbackuprecoverypointcreatedresourceTags'
+  rdslastbackuprecoverypointcreatedresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdslastbackuprecoverypointcreatedresourceId'
+  rdslastbackuprecoverypointcreatedrecoveryPointAgeValue: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdslastbackuprecoverypointcreatedrecoveryPointAgeValue'
+  rdslastbackuprecoverypointcreatedrecoveryPointAgeUnit: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdslastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+  rdsloggingenabledadditionalLogs: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsloggingenabledadditionalLogs'
+  rdsresourcesprotectedbybackupplanresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsresourcesprotectedbybackupplanresourceTags'
+  rdsresourcesprotectedbybackupplanresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsresourcesprotectedbybackupplanresourceId'
+  rdsresourcesprotectedbybackupplancrossRegionList: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsresourcesprotectedbybackupplancrossRegionList'
+  rdsresourcesprotectedbybackupplancrossAccountList: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsresourcesprotectedbybackupplancrossAccountList'
+  rdsresourcesprotectedbybackupplanmaxRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsresourcesprotectedbybackupplanmaxRetentionDays'
+  rdsresourcesprotectedbybackupplanminRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsresourcesprotectedbybackupplanminRetentionDays'
+  rdsresourcesprotectedbybackupplanbackupVaultLockCheck: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsresourcesprotectedbybackupplanbackupVaultLockCheck'
+  rdsstorageencryptedkmsKeyId: !Not
+    - !Equals
+      - ''
+      - !Ref 'rdsstorageencryptedkmsKeyId'
+  requiredtagstag1Key: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag1Key'
+  requiredtagstag1Value: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag1Value'
+  requiredtagstag2Key: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag2Key'
+  requiredtagstag2Value: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag2Value'
+  requiredtagstag3Key: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag3Key'
+  requiredtagstag3Value: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag3Value'
+  requiredtagstag4Key: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag4Key'
+  requiredtagstag4Value: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag4Value'
+  requiredtagstag5Key: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag5Key'
+  requiredtagstag5Value: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag5Value'
+  requiredtagstag6Key: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag6Key'
+  requiredtagstag6Value: !Not
+    - !Equals
+      - ''
+      - !Ref 'requiredtagstag6Value'
+  s3accountlevelpublicaccessblocksIgnorePublicAcls: !Not
+    - !Equals
+      - ''
+      - !Ref 's3accountlevelpublicaccessblocksIgnorePublicAcls'
+  s3accountlevelpublicaccessblocksBlockPublicPolicy: !Not
+    - !Equals
+      - ''
+      - !Ref 's3accountlevelpublicaccessblocksBlockPublicPolicy'
+  s3accountlevelpublicaccessblocksBlockPublicAcls: !Not
+    - !Equals
+      - ''
+      - !Ref 's3accountlevelpublicaccessblocksBlockPublicAcls'
+  s3accountlevelpublicaccessblocksRestrictPublicBuckets: !Not
+    - !Equals
+      - ''
+      - !Ref 's3accountlevelpublicaccessblocksRestrictPublicBuckets'
+  s3accountlevelpublicaccessblocksperiodicIgnorePublicAcls: !Not
+    - !Equals
+      - ''
+      - !Ref 's3accountlevelpublicaccessblocksperiodicIgnorePublicAcls'
+  s3accountlevelpublicaccessblocksperiodicBlockPublicPolicy: !Not
+    - !Equals
+      - ''
+      - !Ref 's3accountlevelpublicaccessblocksperiodicBlockPublicPolicy'
+  s3accountlevelpublicaccessblocksperiodicBlockPublicAcls: !Not
+    - !Equals
+      - ''
+      - !Ref 's3accountlevelpublicaccessblocksperiodicBlockPublicAcls'
+  s3accountlevelpublicaccessblocksperiodicRestrictPublicBuckets: !Not
+    - !Equals
+      - ''
+      - !Ref 's3accountlevelpublicaccessblocksperiodicRestrictPublicBuckets'
+  s3bucketblacklistedactionsprohibitedblacklistedActionPattern: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketblacklistedactionsprohibitedblacklistedActionPattern'
+  s3bucketdefaultlockenabledmode: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketdefaultlockenabledmode'
+  s3bucketlevelpublicaccessprohibitedexcludedPublicBuckets: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketlevelpublicaccessprohibitedexcludedPublicBuckets'
+  s3bucketloggingenabledtargetBucket: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketloggingenabledtargetBucket'
+  s3bucketloggingenabledtargetPrefix: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketloggingenabledtargetPrefix'
+  s3bucketpolicygranteecheckawsPrincipals: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketpolicygranteecheckawsPrincipals'
+  s3bucketpolicygranteecheckservicePrincipals: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketpolicygranteecheckservicePrincipals'
+  s3bucketpolicygranteecheckfederatedUsers: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketpolicygranteecheckfederatedUsers'
+  s3bucketpolicygranteecheckipAddresses: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketpolicygranteecheckipAddresses'
+  s3bucketpolicygranteecheckvpcIds: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketpolicygranteecheckvpcIds'
+  s3bucketpolicynotmorepermissivecontrolPolicy: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketpolicynotmorepermissivecontrolPolicy'
+  s3bucketreplicationenabledReplicationType: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketreplicationenabledReplicationType'
+  s3bucketversioningenabledisMfaDeleteEnabled: !Not
+    - !Equals
+      - ''
+      - !Ref 's3bucketversioningenabledisMfaDeleteEnabled'
+  s3defaultencryptionkmskmsKeyArns: !Not
+    - !Equals
+      - ''
+      - !Ref 's3defaultencryptionkmskmsKeyArns'
+  s3eventnotificationsenableddestinationArn: !Not
+    - !Equals
+      - ''
+      - !Ref 's3eventnotificationsenableddestinationArn'
+  s3eventnotificationsenabledeventTypes: !Not
+    - !Equals
+      - ''
+      - !Ref 's3eventnotificationsenabledeventTypes'
+  s3lastbackuprecoverypointcreatedresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lastbackuprecoverypointcreatedresourceTags'
+  s3lastbackuprecoverypointcreatedresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lastbackuprecoverypointcreatedresourceId'
+  s3lastbackuprecoverypointcreatedrecoveryPointAgeValue: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lastbackuprecoverypointcreatedrecoveryPointAgeValue'
+  s3lastbackuprecoverypointcreatedrecoveryPointAgeUnit: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lastbackuprecoverypointcreatedrecoveryPointAgeUnit'
+  s3lifecyclepolicychecktargetTransitionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lifecyclepolicychecktargetTransitionDays'
+  s3lifecyclepolicychecktargetExpirationDays: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lifecyclepolicychecktargetExpirationDays'
+  s3lifecyclepolicychecktargetTransitionStorageClass: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lifecyclepolicychecktargetTransitionStorageClass'
+  s3lifecyclepolicychecktargetPrefix: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lifecyclepolicychecktargetPrefix'
+  s3lifecyclepolicycheckbucketNames: !Not
+    - !Equals
+      - ''
+      - !Ref 's3lifecyclepolicycheckbucketNames'
+  s3resourcesprotectedbybackupplanresourceTags: !Not
+    - !Equals
+      - ''
+      - !Ref 's3resourcesprotectedbybackupplanresourceTags'
+  s3resourcesprotectedbybackupplanresourceId: !Not
+    - !Equals
+      - ''
+      - !Ref 's3resourcesprotectedbybackupplanresourceId'
+  s3resourcesprotectedbybackupplancrossRegionList: !Not
+    - !Equals
+      - ''
+      - !Ref 's3resourcesprotectedbybackupplancrossRegionList'
+  s3resourcesprotectedbybackupplancrossAccountList: !Not
+    - !Equals
+      - ''
+      - !Ref 's3resourcesprotectedbybackupplancrossAccountList'
+  s3resourcesprotectedbybackupplanmaxRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 's3resourcesprotectedbybackupplanmaxRetentionDays'
+  s3resourcesprotectedbybackupplanminRetentionDays: !Not
+    - !Equals
+      - ''
+      - !Ref 's3resourcesprotectedbybackupplanminRetentionDays'
+  s3resourcesprotectedbybackupplanbackupVaultLockCheck: !Not
+    - !Equals
+      - ''
+      - !Ref 's3resourcesprotectedbybackupplanbackupVaultLockCheck'
+  s3versionlifecyclepolicycheckbucketNames: !Not
+    - !Equals
+      - ''
+      - !Ref 's3versionlifecyclepolicycheckbucketNames'
+  secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequency: !Not
+    - !Equals
+      - ''
+      - !Ref 'secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequency'
+  secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequencyInHours: !Not
+    - !Equals
+      - ''
+      - !Ref 'secretsmanagerrotationenabledcheckmaximumAllowedRotationFrequencyInHours'
+  secretsmanagersecretperiodicrotationmaxDaysSinceRotation: !Not
+    - !Equals
+      - ''
+      - !Ref 'secretsmanagersecretperiodicrotationmaxDaysSinceRotation'
+  secretsmanagersecretunusedunusedForDays: !Not
+    - !Equals
+      - ''
+      - !Ref 'secretsmanagersecretunusedunusedForDays'
+  secretsmanagerusingcmkkmsKeyArns: !Not
+    - !Equals
+      - ''
+      - !Ref 'secretsmanagerusingcmkkmsKeyArns'
+  servicevpcendpointenabledserviceName: !Not
+    - !Equals
+      - ''
+      - !Ref 'servicevpcendpointenabledserviceName'
+  snsencryptedkmskmsKeyIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'snsencryptedkmskmsKeyIds'
+  vpcflowlogsenabledtrafficType: !Not
+    - !Equals
+      - ''
+      - !Ref 'vpcflowlogsenabledtrafficType'
+  vpcpeeringdnsresolutioncheckvpcIds: !Not
+    - !Equals
+      - ''
+      - !Ref 'vpcpeeringdnsresolutioncheckvpcIds'
+  vpcsgopenonlytoauthorizedportsauthorizedTcpPorts: !Not
+    - !Equals
+      - ''
+      - !Ref 'vpcsgopenonlytoauthorizedportsauthorizedTcpPorts'
+  vpcsgopenonlytoauthorizedportsauthorizedUdpPorts: !Not
+    - !Equals
+      - ''
+      - !Ref 'vpcsgopenonlytoauthorizedportsauthorizedUdpPorts'
+  wafv2loggingenabledKinesisFirehoseDeliveryStreamArns: !Not
+    - !Equals
+      - ''
+      - !Ref 'wafv2loggingenabledKinesisFirehoseDeliveryStreamArns'
